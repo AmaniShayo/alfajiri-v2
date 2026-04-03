@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220" fill="none">
+    <defs>
+        <!-- Mask to fade grid lines outward -->
+        <radialGradient id="gridFadeMask" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(110 110) scale(110)">
+            <stop offset="0.45" stop-color="white" />
+            <stop offset="1" stop-color="black" />
+        </radialGradient>
+
+        <mask id="maskFade">
+            <rect width="220" height="220" fill="url(#gridFadeMask)" />
+        </mask>
+    </defs>
+
+    <!-- Dark blue background -->
+    <rect width="220" height="220" fill="none" />
+
+    <!-- Grid with fading mask applied -->
+    <g stroke="#FFC300" stroke-width="0.6" mask="url(#maskFade)">
+        <!-- Vertical lines (20px spacing) -->
+        <line x1="10" y1="0" x2="10" y2="220" />
+        <line x1="30" y1="0" x2="30" y2="220" />
+        <line x1="50" y1="0" x2="50" y2="220" />
+        <line x1="70" y1="0" x2="70" y2="220" />
+        <line x1="90" y1="0" x2="90" y2="220" />
+        <line x1="110" y1="0" x2="110" y2="220" />
+        <line x1="130" y1="0" x2="130" y2="220" />
+        <line x1="150" y1="0" x2="150" y2="220" />
+        <line x1="170" y1="0" x2="170" y2="220" />
+        <line x1="190" y1="0" x2="190" y2="220" />
+        <line x1="210" y1="0" x2="210" y2="220" />
+
+        <!-- Horizontal lines -->
+        <line x1="0" y1="10" x2="220" y2="10" />
+        <line x1="0" y1="30" x2="220" y2="30" />
+        <line x1="0" y1="50" x2="220" y2="50" />
+        <line x1="0" y1="70" x2="220" y2="70" />
+        <line x1="0" y1="90" x2="220" y2="90" />
+        <line x1="0" y1="110" x2="220" y2="110" />
+        <line x1="0" y1="130" x2="220" y2="130" />
+        <line x1="0" y1="150" x2="220" y2="150" />
+        <line x1="0" y1="170" x2="220" y2="170" />
+        <line x1="0" y1="190" x2="220" y2="190" />
+        <line x1="0" y1="210" x2="220" y2="210" />
+    </g>
+
+</svg>
