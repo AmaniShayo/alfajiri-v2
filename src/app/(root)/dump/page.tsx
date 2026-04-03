@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="h-screen bg-zinc-100 antialiased">
+      <body className="h-screen antialiased">
         <ClientProviders>
           <AuthProvider>
             <Toaster />

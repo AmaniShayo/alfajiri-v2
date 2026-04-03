@@ -127,3 +127,21 @@
     @apply font-sans;
     }
 }
+@keyframes gradient-rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 300% !important;
+  animation: gradient-rotate 15s ease infinite;
+}
