@@ -78,7 +78,7 @@ function ChangePasswordForm() {
         </div>
 
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold">Change Password</h1>
+          <h1 className="font-heading text-4xl font-bold">Change Password</h1>
           <p className="text-sm text-gray-600">
             Enter your current and new password to update your credentials.
           </p>

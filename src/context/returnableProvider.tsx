@@ -1,68 +1,59 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+"use client"
 
-import React, { createContext, ReactNode, useContext, useEffect } from "react";
-import { trpc } from "@/lib/trpc";
-import { icons } from "@/constants/icons";
-import { useRouter } from "next/navigation";
-import useAuth from "./authContext";
+import React, { createContext, ReactNode, useContext, useEffect } from "react"
+import { trpc } from "@/lib/trpc"
+import { useRouter } from "next/navigation"
+import useAuth from "./authContext"
+import { Loading } from "@/components/loading"
 
 interface Returnable {
-  _id: string;
-  name: string;
-  totalEmpty: number;
-  totalFilled: number;
-  priceEmpty: number;
-  totalPendingReturns: number;
-  unit: string;
-  isActive: boolean;
-  notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  _id: string
+  name: string
+  totalEmpty: number
+  totalFilled: number
+  priceEmpty: number
+  totalPendingReturns: number
+  unit: string
+  isActive: boolean
+  notes?: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface ReturnableContextType {
-  returnablesLoading: boolean;
-  returnables: Returnable[] | null;
-  returnablesError: string | null;
-  returnablesRefetch: () => void;
+  returnablesLoading: boolean
+  returnables: Returnable[] | null
+  returnablesError: string | null
+  returnablesRefetch: () => void
 }
 
 const ReturnableContext = createContext<ReturnableContextType | undefined>(
   undefined
-);
+)
 
 interface ReturnableProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export const ReturnableProvider: React.FC<ReturnableProviderProps> = ({
   children,
 }) => {
-  const { logout } = useAuth();
-  const router = useRouter();
+  const { logout } = useAuth()
+  const router = useRouter()
 
   const { data, isLoading, error, refetch } =
-    trpc.returnable.getMyReturnables.useQuery();
+    trpc.returnable.getMyReturnables.useQuery()
 
   useEffect(() => {
     if (error?.data?.code === "UNAUTHORIZED") {
-      logout();
-      router.push("/login");
+      logout()
+      router.push("/login")
     }
-  }, [error, router, logout]);
+  }, [error, router, logout])
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen w-screen stroke-yellow-600 relative">
-        <div className="absolute w-full h-full flex items-center justify-center">
-          <p className="text-xs animate-bounce uppercase font-semibold text-pink-900">
-            Alfajiri
-          </p>
-        </div>
-        {icons.loading}
-      </div>
-    );
+    return <Loading />
   }
 
   const serializedReturnables = data?.returnables
@@ -72,7 +63,7 @@ export const ReturnableProvider: React.FC<ReturnableProviderProps> = ({
         createdAt: new Date(r.createdAt),
         updatedAt: new Date(r.updatedAt),
       })) as Returnable[])
-    : null;
+    : null
 
   return (
     <ReturnableContext.Provider
@@ -81,18 +72,19 @@ export const ReturnableProvider: React.FC<ReturnableProviderProps> = ({
         returnables: serializedReturnables,
         returnablesError: error ? error.message : null,
         returnablesRefetch: refetch,
-      }}>
+      }}
+    >
       {children}
     </ReturnableContext.Provider>
-  );
-};
+  )
+}
 
 export const useReturnables = (): ReturnableContextType => {
-  const context = useContext(ReturnableContext);
+  const context = useContext(ReturnableContext)
   if (!context) {
-    throw new Error("useReturnables must be used within a ReturnableProvider");
+    throw new Error("useReturnables must be used within a ReturnableProvider")
   }
-  return context;
-};
+  return context
+}
 
-export default useReturnables;
+export default useReturnables

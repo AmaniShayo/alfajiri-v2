@@ -92,7 +92,7 @@ function RegisterForm() {
     <div className="mx-auto w-full max-w-md">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold">Create an Account</h1>
+          <h1 className="font-heading text-4xl font-bold">Create an Account</h1>
           <p className="mt-2 text-sm text-gray-600">
             Join us and get started in minutes
           </p>

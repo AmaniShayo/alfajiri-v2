@@ -69,7 +69,7 @@ function ForgotPasswordForm() {
 
         {/* Header */}
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold">Forgot Password</h1>
+          <h1 className="font-heading text-4xl font-bold">Forgot Password</h1>
           <p className="text-sm text-gray-600">
             Enter your registered email address. We&apos;ll send you a code to
             reset your password.

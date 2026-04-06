@@ -1,60 +1,49 @@
-"use client";
+"use client"
 
-import React, { createContext, ReactNode, useContext, useEffect } from "react";
-import { trpc } from "@/lib/trpc";
-import { icons } from "@/constants/icons";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import useAuth from "./authContext";
-import { Business, User } from "@/constants/types";
+import React, { createContext, ReactNode, useContext, useEffect } from "react"
+import { trpc } from "@/lib/trpc"
+import { useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
+import useAuth from "./authContext"
+import { Business, User } from "@/constants/types"
+import { Loading } from "@/components/loading"
 
 interface UserContextType {
-  userLoading: boolean;
-  user: User | null;
-  business: Business | null;
-  error: string | null;
-  userRefetch: () => void;
+  userLoading: boolean
+  user: User | null
+  business: Business | null
+  error: string | null
+  userRefetch: () => void
 }
 
-export const UserContext = createContext<UserContextType | undefined>(
-  undefined,
-);
+export const UserContext = createContext<UserContextType | undefined>(undefined)
 
 interface UserProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const router = useRouter();
-  const path = usePathname();
-  const { logout } = useAuth();
-  const { data, isLoading, error, refetch } = trpc.user.me.useQuery();
-  console.log(data);
+  const router = useRouter()
+  const path = usePathname()
+  const { logout } = useAuth()
+  const { data, isLoading, error, refetch } = trpc.user.me.useQuery()
+  console.log(data)
 
   useEffect(() => {
     if (error?.data?.code === "UNAUTHORIZED") {
-      logout();
-      router.push("/login");
+      logout()
+      router.push("/login")
     }
-  }, [error, logout, router]);
+  }, [error, logout, router])
 
   useEffect(() => {
     if (data && !data.business && path !== "/admin") {
-      router.push("/onboarding");
+      router.push("/onboarding")
     }
-  }, [data, router, path]);
+  }, [data, router, path])
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen w-screen stroke-yellow-600 relative">
-        <div className="absolute w-full h-full flex items-center justify-center">
-          <p className="text-xs animate-bounce uppercase font-semibold text-pink-900">
-            Alfajiri
-          </p>
-        </div>
-        {icons.loading}
-      </div>
-    );
+    return <Loading />
   }
 
   return (
@@ -76,15 +65,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     >
       {children}
     </UserContext.Provider>
-  );
-};
+  )
+}
 
 export const useUserProfile = (): UserContextType => {
-  const context = useContext(UserContext);
+  const context = useContext(UserContext)
   if (!context) {
-    throw new Error("useUserProfile must be used within an UserProvider");
+    throw new Error("useUserProfile must be used within an UserProvider")
   }
-  return context;
-};
+  return context
+}
 
-export default useUserProfile;
+export default useUserProfile

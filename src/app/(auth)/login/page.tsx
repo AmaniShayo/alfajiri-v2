@@ -63,7 +63,7 @@ function LoginForm() {
     <div className="w-full max-w-110">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <h1 className="text-4xl font-bold">Login</h1>
+          <h1 className="font-heading text-4xl font-bold">Login</h1>
         </div>
 
         <div className="space-y-2">

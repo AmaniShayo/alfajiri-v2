@@ -1,13 +1,24 @@
 import "@/app/globals.css"
+import { Geist_Mono, Raleway, Roboto } from "next/font/google"
 import ClientProviders from "@/context/ClientProviders"
 import { AuthProvider } from "@/context/authContext"
 import { Toaster } from "@/components/ui/sonner"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 export const metadata = {
   title: "ALFAJIRI - auth",
   description: "Inventory management system",
 }
+
+const robotoHeading = Roboto({ subsets: ["latin"], variable: "--font-heading" })
+
+const raleway = Raleway({ subsets: ["latin"], variable: "--font-sans" })
+
+const fontMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+})
 
 export default function RootLayout({
   children,
@@ -16,14 +27,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="h-screen antialiased">
+      <body
+        className={cn(
+          "antialiased",
+          fontMono.variable,
+          "font-sans",
+          raleway.variable,
+          robotoHeading.variable
+        )}
+      >
         <ClientProviders>
           <AuthProvider>
             <Toaster richColors={true} />
-            <div className="grid h-screen w-full grid-cols-12 bg-linear-to-bl from-[#a9d7fc] via-[#fff0f5] to-[#feeecd]">
+            <div className="grid min-h-screen w-full grid-cols-12 bg-linear-to-bl from-[#a9d7fc] via-[#fff0f5] to-[#feeecd]">
               <div className="col-span-4 max-md:col-span-12">
                 <div className="flex h-full w-full flex-col p-4">
-                  <div className="">
+                  <div className="mb-4">
                     <div className="flex w-fit items-center gap-2 rounded-full border bg-white px-4 py-2">
                       <Image
                         src="/logo.svg"
@@ -31,7 +50,7 @@ export default function RootLayout({
                         width={40}
                         height={40}
                       />
-                      <h1 className="text-2xl font-bold tracking-tighter text-zinc-900">
+                      <h1 className="font-heading text-3xl font-bold tracking-tighter">
                         ALFAJIRI
                       </h1>
                     </div>

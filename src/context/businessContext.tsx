@@ -1,41 +1,30 @@
-"use client";
+"use client"
 
-import React, { createContext, ReactNode, useContext } from "react";
-import { trpc } from "@/lib/trpc";
-import { icons } from "@/constants/icons";
-import { IUserAuth } from "@/server/database/model";
+import React, { createContext, ReactNode, useContext } from "react"
+import { trpc } from "@/lib/trpc"
+import { Loading } from "@/components/loading";
+import { IUserAuth } from "@/server/database/model"
 
 interface UserContextType {
-  userLoading: boolean;
-  user: IUserAuth | null;
-  error: string | null;
-  userRefetch: () => void;
+  userLoading: boolean
+  user: IUserAuth | null
+  error: string | null
+  userRefetch: () => void
 }
 
-export const UserContext = createContext<UserContextType | undefined>(
-  undefined
-);
+export const UserContext = createContext<UserContextType | undefined>(undefined)
 
 interface BusinessProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export const BusinessProvider: React.FC<BusinessProviderProps> = ({
   children,
 }) => {
-  const { data, isLoading, error, refetch } = trpc.user.me.useQuery();
+  const { data, isLoading, error, refetch } = trpc.user.me.useQuery()
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen w-screen stroke-yellow-600 relative">
-        <div className="absolute w-full h-full flex items-center justify-center">
-          <p className="text-xs animate-bounce uppercase font-semibold text-pink-900">
-            Alfajiri
-          </p>
-        </div>
-        {icons.loading}
-      </div>
-    );
+    return <Loading />
   }
 
   return (
@@ -47,18 +36,19 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({
           : null,
         error: error ? error.message : null,
         userRefetch: refetch,
-      }}>
+      }}
+    >
       {children}
     </UserContext.Provider>
-  );
-};
+  )
+}
 
 export const useUserProfile = (): UserContextType => {
-  const context = useContext(UserContext);
+  const context = useContext(UserContext)
   if (!context) {
-    throw new Error("useUserProfile must be used within an BusinessProvider");
+    throw new Error("useUserProfile must be used within an BusinessProvider")
   }
-  return context;
-};
+  return context
+}
 
-export default useUserProfile;
+export default useUserProfile
