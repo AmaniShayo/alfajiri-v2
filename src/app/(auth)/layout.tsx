@@ -1,5 +1,4 @@
 import "@/app/globals.css"
-1
 import ClientProviders from "@/context/ClientProviders"
 import { AuthProvider } from "@/context/authContext"
 import { Toaster } from "@/components/ui/sonner"
@@ -20,8 +19,8 @@ export default function RootLayout({
       <body className="h-screen antialiased">
         <ClientProviders>
           <AuthProvider>
-            <Toaster />
-            <div className="animate-gradient grid h-screen w-full grid-cols-12 bg-linear-to-bl from-[#82c7ff] via-[#fff0f5] to-[#feeecd]">
+            <Toaster richColors={true} />
+            <div className="grid h-screen w-full grid-cols-12 bg-linear-to-bl from-[#a9d7fc] via-[#fff0f5] to-[#feeecd]">
               <div className="col-span-4 max-md:col-span-12">
                 <div className="flex h-full w-full flex-col p-4">
                   <div className="">

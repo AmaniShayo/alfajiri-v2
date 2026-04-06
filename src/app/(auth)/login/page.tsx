@@ -9,7 +9,6 @@ import { useState } from "react"
 import useAuth from "@/context/authContext"
 import { trpc } from "@/lib/trpc"
 import { toast } from "sonner"
-import { icons } from "@/constants/icons"
 
 import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, EyeOff } from "@hugeicons/core-free-icons"
