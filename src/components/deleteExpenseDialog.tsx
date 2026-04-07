@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   AlertDialog,
@@ -10,22 +10,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
+} from "@/components/ui/alert-dialog"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Trash } from "@hugeicons/core-free-icons"
+import { useState } from "react"
+import { toast } from "sonner"
+import { trpc } from "@/lib/trpc"
 
 interface DeleteExpenseDialogProps {
   expense: {
-    _id: string;
-    description?: string;
-    amount: number;
-  };
-  trigger?: React.ReactNode;
-  onSuccess?: () => void;
+    _id: string
+    description?: string
+    amount: number
+  }
+  trigger?: React.ReactNode
+  onSuccess?: () => void
 }
 
 export function DeleteExpenseDialog({
@@ -33,40 +34,41 @@ export function DeleteExpenseDialog({
   trigger,
   onSuccess,
 }: DeleteExpenseDialogProps) {
-  const [open, setOpen] = useState(false);
-  const [confirmText, setConfirmText] = useState("");
+  const [open, setOpen] = useState(false)
+  const [confirmText, setConfirmText] = useState("")
 
   const deleteMutation = trpc.expense.deleteExpense.useMutation({
     onSuccess: () => {
-      toast.success("Expense deleted successfully");
-      onSuccess?.();
-      setOpen(false);
-      setConfirmText("");
+      toast.success("Expense deleted successfully")
+      onSuccess?.()
+      setOpen(false)
+      setConfirmText("")
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to delete expense");
+      toast.error(err.message || "Failed to delete expense")
     },
-  });
+  })
 
   const expenseIdentifier =
-    expense.description || `Expense of ${expense.amount}`;
-  const isConfirmed = confirmText.trim() === expenseIdentifier;
+    expense.description || `Expense of ${expense.amount}`
+  const isConfirmed = confirmText.trim() === expenseIdentifier
 
   const handleDelete = () => {
     if (isConfirmed) {
-      deleteMutation.mutate({ expenseId: expense._id });
+      deleteMutation.mutate({ expenseId: expense._id })
     }
-  };
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
+      <AlertDialogTrigger>
         {trigger || (
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start text-destructive hover:text-destructive">
-            <Trash2 className="mr-2 h-4 w-4" />
+            className="w-full justify-start text-destructive hover:text-destructive"
+          >
+            <HugeiconsIcon icon={Trash} className="h-4 w-4" />
             Delete
           </Button>
         )}
@@ -86,7 +88,7 @@ export function DeleteExpenseDialog({
         </AlertDialogHeader>
 
         <div className="py-4">
-          <p className="text-sm text-muted-foreground mb-2">
+          <p className="mb-2 text-sm text-muted-foreground">
             To confirm, please type{" "}
             <span className="font-bold text-foreground">
               {expenseIdentifier}
@@ -100,7 +102,7 @@ export function DeleteExpenseDialog({
             autoFocus
           />
           {!isConfirmed && confirmText.length > 0 && (
-            <p className="text-sm text-destructive mt-2">Text does not match</p>
+            <p className="mt-2 text-sm text-destructive">Text does not match</p>
           )}
         </div>
 
@@ -111,11 +113,12 @@ export function DeleteExpenseDialog({
           <AlertDialogAction
             onClick={handleDelete}
             disabled={!isConfirmed || deleteMutation.isPending}
-            className="bg-destructive text-white hover:bg-destructive/90">
+            className="bg-destructive text-white hover:bg-destructive/90"
+          >
             {deleteMutation.isPending ? "Deleting..." : "Delete Expense"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

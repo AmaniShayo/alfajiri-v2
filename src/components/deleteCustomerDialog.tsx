@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   AlertDialog,
@@ -10,21 +10,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
+} from "@/components/ui/alert-dialog"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Trash } from "@hugeicons/core-free-icons"
+import { useState } from "react"
+import { toast } from "sonner"
+import { trpc } from "@/lib/trpc"
 
 interface DeleteCustomerDialogProps {
   customer: {
-    _id: string;
-    customerName: string;
-  };
-  trigger?: React.ReactNode;
-  onSuccess?: () => void;
+    _id: string
+    customerName: string
+  }
+  trigger?: React.ReactNode
+  onSuccess?: () => void
 }
 
 export function DeleteCustomerDialog({
@@ -32,38 +33,39 @@ export function DeleteCustomerDialog({
   trigger,
   onSuccess,
 }: DeleteCustomerDialogProps) {
-  const [open, setOpen] = useState(false);
-  const [confirmText, setConfirmText] = useState("");
+  const [open, setOpen] = useState(false)
+  const [confirmText, setConfirmText] = useState("")
 
   const deleteMutation = trpc.customer.deleteCustomer.useMutation({
     onSuccess: () => {
-      toast.success("Customer deleted successfully");
-      onSuccess?.();
-      setOpen(false);
-      setConfirmText("");
+      toast.success("Customer deleted successfully")
+      onSuccess?.()
+      setOpen(false)
+      setConfirmText("")
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to delete customer");
+      toast.error(err.message || "Failed to delete customer")
     },
-  });
+  })
 
-  const isConfirmed = confirmText.trim() === customer.customerName;
+  const isConfirmed = confirmText.trim() === customer.customerName
 
   const handleDelete = () => {
     if (isConfirmed) {
-      deleteMutation.mutate({ customerId: customer._id });
+      deleteMutation.mutate({ customerId: customer._id })
     }
-  };
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
+      <AlertDialogTrigger>
         {trigger || (
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start text-destructive hover:text-destructive">
-            <Trash2 className="mr-2 h-4 w-4" />
+            className="w-full justify-start text-destructive hover:text-destructive"
+          >
+            <HugeiconsIcon icon={Trash} className="h-4 w-4" />
             Delete
           </Button>
         )}
@@ -83,7 +85,7 @@ export function DeleteCustomerDialog({
         </AlertDialogHeader>
 
         <div className="py-4">
-          <p className="text-sm text-muted-foreground mb-2">
+          <p className="mb-2 text-sm text-muted-foreground">
             To confirm, please type{" "}
             <span className="font-bold text-foreground">
               {customer.customerName}
@@ -97,7 +99,7 @@ export function DeleteCustomerDialog({
             autoFocus
           />
           {!isConfirmed && confirmText.length > 0 && (
-            <p className="text-sm text-destructive mt-2">Name does not match</p>
+            <p className="mt-2 text-sm text-destructive">Name does not match</p>
           )}
         </div>
 
@@ -108,11 +110,12 @@ export function DeleteCustomerDialog({
           <AlertDialogAction
             onClick={handleDelete}
             disabled={!isConfirmed || deleteMutation.isPending}
-            className="bg-destructive text-white hover:bg-destructive/90">
+            className="bg-destructive text-white hover:bg-destructive/90"
+          >
             {deleteMutation.isPending ? "Deleting..." : "Delete Customer"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

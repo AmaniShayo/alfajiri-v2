@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   AlertDialog,
@@ -10,21 +10,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
+} from "@/components/ui/alert-dialog"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Trash } from "@hugeicons/core-free-icons"
+import { useState } from "react"
+import { toast } from "sonner"
+import { trpc } from "@/lib/trpc"
 
 interface DeleteProductDialogProps {
   product: {
-    _id: string;
-    productName: string;
-  };
-  trigger?: React.ReactNode;
-  onSuccess?: () => void;
+    _id: string
+    productName: string
+  }
+  trigger?: React.ReactNode
+  onSuccess?: () => void
 }
 
 export function DeleteProductDialog({
@@ -32,38 +33,39 @@ export function DeleteProductDialog({
   trigger,
   onSuccess,
 }: DeleteProductDialogProps) {
-  const [open, setOpen] = useState(false);
-  const [confirmText, setConfirmText] = useState("");
+  const [open, setOpen] = useState(false)
+  const [confirmText, setConfirmText] = useState("")
 
   const deleteMutation = trpc.product.deleteProduct.useMutation({
     onSuccess: () => {
-      toast.success("Product deleted successfully");
-      onSuccess?.();
-      setOpen(false);
-      setConfirmText("");
+      toast.success("Product deleted successfully")
+      onSuccess?.()
+      setOpen(false)
+      setConfirmText("")
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to delete product");
+      toast.error(err.message || "Failed to delete product")
     },
-  });
+  })
 
-  const isConfirmed = confirmText.trim() === product.productName;
+  const isConfirmed = confirmText.trim() === product.productName
 
   const handleDelete = () => {
     if (isConfirmed) {
-      deleteMutation.mutate({ productId: product._id });
+      deleteMutation.mutate({ productId: product._id })
     }
-  };
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
+      <AlertDialogTrigger>
         {trigger || (
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start text-destructive">
-            <Trash2 className="mr-2 h-4 w-4" />
+            className="w-full justify-start text-destructive"
+          >
+            <HugeiconsIcon icon={Trash} className="h-4 w-4" />
             Delete
           </Button>
         )}
@@ -82,7 +84,7 @@ export function DeleteProductDialog({
         </AlertDialogHeader>
 
         <div className="py-4">
-          <p className="text-sm text-muted-foreground mb-2">
+          <p className="mb-2 text-sm text-muted-foreground">
             Please type{" "}
             <span className="font-bold text-foreground">
               {product.productName}
@@ -96,7 +98,7 @@ export function DeleteProductDialog({
             autoFocus
           />
           {!isConfirmed && confirmText.length > 0 && (
-            <p className="text-sm text-destructive mt-2">
+            <p className="mt-2 text-sm text-destructive">
               Product name does not match
             </p>
           )}
@@ -109,11 +111,12 @@ export function DeleteProductDialog({
           <AlertDialogAction
             onClick={handleDelete}
             disabled={!isConfirmed || deleteMutation.isPending}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-white">
+            className="text-destructive-foreground bg-destructive text-white hover:bg-destructive/90"
+          >
             {deleteMutation.isPending ? "Deleting..." : "Delete Product"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

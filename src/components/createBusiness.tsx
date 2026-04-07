@@ -31,7 +31,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Check, ChevronUp } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { currencies } from "@/constants/currency"
 import { Spinner } from "@/components/ui/spinner"
@@ -163,7 +164,10 @@ export function CreateBusinessDialog({
                       {selectedCurrencyData
                         ? `${selectedCurrencyData.country} - ${selectedCurrencyData.currencyName}`
                         : "Select currency..."}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      <HugeiconsIcon
+                        icon={ChevronUp}
+                        className="ml-2 h-4 w-4 shrink-0 opacity-50"
+                      />
                     </Button>
                   </PopoverTrigger>
 
@@ -182,7 +186,10 @@ export function CreateBusinessDialog({
                                 setCurrencyOpen(false)
                               }}
                             >
-                              <Check
+                              {currency.country} - {currency.currencyName} (
+                              {currency.code})
+                              <HugeiconsIcon
+                                icon={Check}
                                 className={cn(
                                   "mr-2 h-4 w-4",
                                   selectedCurrency === currency.code
@@ -190,8 +197,6 @@ export function CreateBusinessDialog({
                                     : "opacity-0"
                                 )}
                               />
-                              {currency.country} - {currency.currencyName} (
-                              {currency.code})
                             </CommandItem>
                           ))}
                         </CommandGroup>
