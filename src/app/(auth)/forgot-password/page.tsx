@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronLeft } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ChevronLeft } from "@hugeicons/core-free-icons"
 import { useState } from "react"
 import { trpc } from "@/lib/trpc"
 import { toast } from "sonner"
@@ -62,7 +63,7 @@ function ForgotPasswordForm() {
             href="/login"
             className="flex items-center text-sm text-blue-950 hover:underline"
           >
-            <ChevronLeft className="mr-1 h-5 w-5" />
+            <HugeiconsIcon icon={ChevronLeft} className="mr-1 h-5 w-5" />
             Back
           </a>
         </div>

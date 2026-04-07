@@ -76,7 +76,7 @@ export function NavUser() {
           />
 
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56"
+            className="w-[--anchor-width] min-w-56"
             side="top"
             align="end"
             sideOffset={8}

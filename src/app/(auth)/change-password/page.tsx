@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronLeft } from "lucide-react"
 import { useState } from "react"
 import { trpc } from "@/lib/trpc"
 import { toast } from "sonner"
@@ -13,7 +12,7 @@ import { useRouter } from "next/navigation"
 import { Spinner } from "@/components/ui/spinner"
 
 import { HugeiconsIcon } from "@hugeicons/react"
-import { EyeIcon, EyeOff } from "@hugeicons/core-free-icons"
+import { EyeIcon, EyeOff, ChevronLeft } from "@hugeicons/core-free-icons"
 
 const ChangePasswordSchema = z.object({
   oldPassword: z.string().min(1, {
@@ -72,7 +71,7 @@ function ChangePasswordForm() {
             onClick={() => router.back()}
             className="flex items-center text-sm text-blue-950 hover:underline"
           >
-            <ChevronLeft className="mr-1 h-5 w-5" />
+            <HugeiconsIcon icon={ChevronLeft} className="mr-1 h-5 w-5" />
             Back
           </button>
         </div>
@@ -144,11 +143,7 @@ function ChangePasswordForm() {
           )}
         </div>
 
-        <Button
-          type="submit"
-          className="h-11 w-full bg-yellow-600 hover:bg-yellow-600/90"
-          disabled={loading}
-        >
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? <Spinner /> : "Change Password"}
         </Button>
       </form>

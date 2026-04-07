@@ -3,7 +3,10 @@ import React, { useEffect, useState } from "react"
 import { SidebarTrigger } from "./ui/sidebar"
 import { ModeToggle } from "./themeToggle"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Expand, Minimize } from "@hugeicons/core-free-icons"
+import {
+  ArrowAllDirectionIcon,
+  ArrowShrinkIcon,
+} from "@hugeicons/core-free-icons"
 import { Button } from "./ui/button"
 import useUserProfile from "@/context/userContext"
 import { Separator } from "./ui/separator"
@@ -110,11 +113,11 @@ const Header = () => {
         <Button
           size="icon"
           onClick={toggleFullScreen}
-          className="rounded-full border-none shadow-none"
-          variant="outline"
+          className="cursor-pointer rounded-full bg-accent"
+          variant="ghost"
         >
           <HugeiconsIcon
-            icon={isFullscreen ? Minimize : Expand}
+            icon={isFullscreen ? ArrowShrinkIcon : ArrowAllDirectionIcon}
             className="h-4 w-4"
           />
         </Button>
