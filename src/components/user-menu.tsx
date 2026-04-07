@@ -5,7 +5,7 @@ import {
   LockIcon,
   BadgeCheck,
   Logout01Icon,
-  ChevronsUpDown,
+  ChevronDoubleCloseFreeIcons,
 } from "@hugeicons/core-free-icons"
 
 import { useAuth } from "@/context/authContext"
@@ -27,7 +27,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar"
 
 import { useRouter } from "next/navigation"
@@ -36,7 +35,6 @@ export function NavUser() {
   const { user } = useUserProfile()
   const { logout } = useAuth()
   const router = useRouter()
-  const { isMobile } = useSidebar()
 
   if (!user) return null
 
@@ -69,7 +67,10 @@ export function NavUser() {
                   )}
                 </div>
 
-                <HugeiconsIcon icon={ChevronsUpDown} className="h-4 w-4" />
+                <HugeiconsIcon
+                  icon={ChevronDoubleCloseFreeIcons}
+                  className="h-4 w-4 rotate-90"
+                />
               </SidebarMenuButton>
             )}
           />
@@ -103,32 +104,23 @@ export function NavUser() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={() => router.push("/change-password")}
-                className="cursor-pointer"
-              >
-                <HugeiconsIcon icon={LockIcon} className="h-4 w-4" />
-                Change Password
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-
-            <DropdownMenuSeparator />
-
-            <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer">
-                <HugeiconsIcon icon={BadgeCheck} className="h-4 w-4" />
-                Account
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-
-            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => router.push("/change-password")}
+              className="cursor-pointer"
+            >
+              <HugeiconsIcon icon={LockIcon} className="h-4 w-4" />
+              Change Password
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              <HugeiconsIcon icon={BadgeCheck} className="h-4 w-4" />
+              Account
+            </DropdownMenuItem>
 
             <DropdownMenuItem
               onClick={() => logout()}
-              className="cursor-pointer text-destructive focus:bg-destructive/10"
+              className="cursor-pointer focus:bg-destructive/5"
             >
-              <HugeiconsIcon icon={Logout01Icon} className="h-4 w-4" />
+              <HugeiconsIcon icon={Logout01Icon} className="hover h-4 w-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

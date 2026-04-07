@@ -30,12 +30,7 @@ export function ModeToggle() {
         <DropdownMenuTrigger
           className=""
           render={(triggerProps) => (
-            <Button
-              {...triggerProps}
-              variant="outline"
-              size="icon"
-              className="rounded-full border-none shadow-none"
-            >
+            <Button {...triggerProps} variant={"ghost"} size="icon">
               <HugeiconsIcon
                 icon={Sun02Icon}
                 size={iconSize}

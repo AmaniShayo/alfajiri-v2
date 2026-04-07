@@ -106,7 +106,7 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-2">
         <Button
           size="icon"
           onClick={toggleFullScreen}
