@@ -37,6 +37,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { useSidebar } from "@/components/ui/sidebar"
+import { NavUser } from "./user-menu"
 
 export const adminNavItems = [
   {
@@ -93,28 +94,24 @@ export const adminNavItems = [
 
 export function AppSidebar() {
   const path = usePathname()
-  const { isMobile, toggleSidebar, open } = useSidebar()
+  const { isMobile, toggleSidebar } = useSidebar()
 
   // Hugeicons are naturally bigger and more premium-looking
   const iconSize = 28
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader
-        className={`${!open ? "my-3" : "border-b"} mx-2 mb-0 border-gray-800 p-0`}
-      >
+    <Sidebar collapsible="icon" variant="inset">
+      <SidebarHeader className="py-0">
         <SidebarMenuButton
           size="lg"
           className="cursor-default hover:bg-transparent active:bg-transparent"
         >
-          <Avatar className="h-8 w-7 rounded-none">
+          <Avatar className="h-8 w-8 rounded-none">
             <AvatarImage src="/logo.png" alt="logo" />
             <AvatarFallback className="rounded-full">AIMS</AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate text-lg font-medium text-white">
-              ALFAJIRI
-            </span>
+            <span className="truncate text-lg font-bold">ALFAJIRI</span>
           </div>
         </SidebarMenuButton>
       </SidebarHeader>
@@ -133,8 +130,8 @@ export function AppSidebar() {
                     tooltip="Dashboard"
                     className={`${
                       path === "/dashboard"
-                        ? "cursor-default rounded-sm bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white"
-                        : "cursor-pointer rounded-sm text-white hover:bg-yellow-600/10 hover:text-white"
+                        ? "cursor-default bg-accent text-primary"
+                        : "cursor-pointer"
                     }`}
                     onClick={() => isMobile && toggleSidebar()}
                   >
@@ -153,8 +150,8 @@ export function AppSidebar() {
                     tooltip="Point of Sale"
                     className={`${
                       path === "/pos"
-                        ? "cursor-default rounded-sm bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white"
-                        : "cursor-pointer rounded-sm text-white hover:bg-yellow-600/10 hover:text-white"
+                        ? "cursor-default bg-accent text-primary"
+                        : "cursor-pointer"
                     }`}
                     onClick={() => isMobile && toggleSidebar()}
                   >
@@ -170,8 +167,8 @@ export function AppSidebar() {
                     tooltip="Purchase"
                     className={`${
                       path === "/purchase"
-                        ? "cursor-default rounded-sm bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white"
-                        : "cursor-pointer rounded-sm text-white hover:bg-yellow-600/10 hover:text-white"
+                        ? "cursor-default bg-accent text-primary"
+                        : "cursor-pointer"
                     }`}
                     onClick={() => isMobile && toggleSidebar()}
                   >
@@ -187,8 +184,8 @@ export function AppSidebar() {
                     tooltip="My Businesses"
                     className={`${
                       path === "/my-businesses"
-                        ? "cursor-default rounded-sm bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white"
-                        : "cursor-pointer rounded-sm text-white hover:bg-yellow-600/10 hover:text-white"
+                        ? "cursor-default bg-accent text-primary"
+                        : "cursor-pointer"
                     }`}
                     onClick={() => isMobile && toggleSidebar()}
                   >
@@ -209,8 +206,8 @@ export function AppSidebar() {
                       tooltip={item.title}
                       className={`${
                         (path ?? "").startsWith(item.href)
-                          ? "cursor-default rounded-sm bg-yellow-600 text-white hover:bg-yellow-600 hover:text-white"
-                          : "cursor-pointer text-white hover:bg-yellow-500/10 hover:text-yellow-100"
+                          ? "cursor-default bg-accent text-primary"
+                          : "cursor-pointer"
                       }`}
                       onClick={() => isMobile && toggleSidebar()}
                     >
@@ -233,8 +230,8 @@ export function AppSidebar() {
                     tooltip="Settings"
                     className={`${
                       (path ?? "").startsWith("/settings")
-                        ? "cursor-default rounded-sm bg-blue-900 text-white hover:bg-blue-900 hover:text-white"
-                        : "cursor-pointer text-white hover:bg-blue-500/10 hover:text-blue-100"
+                        ? "cursor-default bg-accent text-primary"
+                        : "cursor-pointer"
                     }`}
                     onClick={() => isMobile && toggleSidebar()}
                   >
@@ -247,7 +244,7 @@ export function AppSidebar() {
               <SidebarMenuButton
                 tooltip="Feedback"
                 onClick={() => isMobile && toggleSidebar()}
-                className="cursor-pointer bg-transparent text-white shadow-none hover:bg-transparent hover:text-white active:bg-transparent"
+                className="cursor-pointer"
               >
                 <HugeiconsIcon icon={MessageFavourite01Icon} size={iconSize} />
                 <span>Feedback</span>
@@ -257,10 +254,36 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   tooltip="Help center"
                   onClick={() => isMobile && toggleSidebar()}
-                  className="cursor-pointer bg-transparent text-white shadow-none hover:bg-transparent hover:text-white active:bg-transparent"
+                  className="cursor-pointer"
                 >
                   <HugeiconsIcon icon={HelpCircleIcon} size={iconSize} />
                   <span>Help center</span>
+                </SidebarMenuButton>
+              </Link>
+
+              <SidebarGroupLabel className="text-gray-400">
+                LEGAL
+              </SidebarGroupLabel>
+
+              <Link href="terms-of-service">
+                <SidebarMenuButton
+                  tooltip="Terms of Service"
+                  onClick={() => isMobile && toggleSidebar()}
+                  className="cursor-pointer"
+                >
+                  <HugeiconsIcon icon={ScrollIcon} size={iconSize} />
+                  <span>Terms of Service</span>
+                </SidebarMenuButton>
+              </Link>
+
+              <Link href="privacy-policy">
+                <SidebarMenuButton
+                  tooltip="Privacy Policy"
+                  onClick={() => isMobile && toggleSidebar()}
+                  className="cursor-pointer"
+                >
+                  <HugeiconsIcon icon={Shield01Icon} size={iconSize} />
+                  <span>Privacy Policy</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenu>
@@ -268,31 +291,9 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="py-2">
-        <SidebarGroupLabel className="text-gray-400">LEGAL</SidebarGroupLabel>
-
-        <Link href="terms-of-service">
-          <SidebarMenuButton
-            tooltip="Terms of Service"
-            onClick={() => isMobile && toggleSidebar()}
-            className="cursor-pointer bg-transparent text-white underline shadow-none hover:bg-transparent hover:text-white active:bg-transparent"
-          >
-            <HugeiconsIcon icon={ScrollIcon} size={iconSize} />
-            <span>Terms of Service</span>
-          </SidebarMenuButton>
-        </Link>
-
-        <Link href="privacy-policy">
-          <SidebarMenuButton
-            tooltip="Privacy Policy"
-            onClick={() => isMobile && toggleSidebar()}
-            className="cursor-pointer bg-transparent text-white underline shadow-none hover:bg-transparent hover:text-white active:bg-transparent"
-          >
-            <HugeiconsIcon icon={Shield01Icon} size={iconSize} />
-            <span>Privacy Policy</span>
-          </SidebarMenuButton>
-        </Link>
-      </SidebarFooter>
+      <SidebarFooter>
+        <NavUser />
+        </SidebarFooter>
     </Sidebar>
   )
 }

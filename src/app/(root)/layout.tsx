@@ -28,7 +28,7 @@ function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-white antialiased dark:bg-black dark:text-white">
+      <body className="bg-white antialiased">
         <ClientProviders>
           <AuthProvider>
             <UserProvider>
@@ -39,9 +39,9 @@ function RootLayout({
                       <ReturnableProvider>
                         <Toaster position="top-center" />
                         <main className="w-screen">
-                          <div className="flex h-screen w-screen">
+                          <div className="flex h-screen w-screen md:p-2">
                             <AppSidebar />
-                            <div className="h-screen w-full overflow-hidden">
+                            <div className="h-full w-full overflow-hidden bg-background md:rounded-4xl md:shadow">
                               <Header />
                               <div className="h-[calc(100%-48px)] p-2">
                                 {children}

@@ -5,11 +5,11 @@ import { ModeToggle } from "./themeToggle"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Expand, Minimize } from "@hugeicons/core-free-icons"
 import { Button } from "./ui/button"
-import { UserMenu } from "./user-menu"
 import useUserProfile from "@/context/userContext"
+import { Separator } from "./ui/separator"
 
 const Header = () => {
-  const { user, business } = useUserProfile()
+  const { business } = useUserProfile()
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   const toggleFullScreen = () => {
@@ -95,15 +95,13 @@ const Header = () => {
   }, [])
 
   return (
-    <div className="z-50 flex h-12 items-center border-b bg-white px-2 py-2 dark:bg-black">
+    <div className="z-50 flex h-12 items-center border-b p-2">
       <div className="flex min-w-0 flex-1 items-center">
         <SidebarTrigger />
-        <div className="ml-2 flex min-w-0 flex-col">
+        <Separator className="mx-2" orientation="vertical" />
+        <div className="ml-2">
           <div className="truncate text-sm font-semibold">
             {business?.businessName}
-          </div>
-          <div className="truncate text-xs text-muted-foreground">
-            {user?.email}
           </div>
         </div>
       </div>
@@ -115,10 +113,12 @@ const Header = () => {
           className="rounded-full border-none shadow-none"
           variant="outline"
         >
-          <HugeiconsIcon icon={isFullscreen ? Minimize : Expand} className="h-4 w-4" />
+          <HugeiconsIcon
+            icon={isFullscreen ? Minimize : Expand}
+            className="h-4 w-4"
+          />
         </Button>
         <ModeToggle />
-        <UserMenu />
       </div>
     </div>
   )

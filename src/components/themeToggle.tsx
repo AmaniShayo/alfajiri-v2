@@ -27,21 +27,29 @@ export function ModeToggle() {
   return (
     <div>
       <DropdownMenu>
-        <DropdownMenuTrigger className="rounded-full border-none shadow-none">
-          <Button variant="outline" size="icon">
-            <HugeiconsIcon
-              icon={Sun02Icon}
-              size={iconSize}
-              className="scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
-            />
-            <HugeiconsIcon
-              icon={Moon02Icon}
-              size={iconSize}
-              className="absolute scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
-            />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          className=""
+          render={(triggerProps) => (
+            <Button
+              {...triggerProps}
+              variant="outline"
+              size="icon"
+              className="rounded-full border-none shadow-none"
+            >
+              <HugeiconsIcon
+                icon={Sun02Icon}
+                size={iconSize}
+                className="scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
+              />
+              <HugeiconsIcon
+                icon={Moon02Icon}
+                size={iconSize}
+                className="absolute scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
+              />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+          )}
+        ></DropdownMenuTrigger>
 
         <DropdownMenuContent align="end">
           {/* Light */}
@@ -55,7 +63,7 @@ export function ModeToggle() {
               <HugeiconsIcon
                 icon={Check}
                 size={18}
-                className="ml-auto text-yellow-600"
+                className="ml-auto text-primary"
               />
             )}
           </DropdownMenuItem>
@@ -73,7 +81,7 @@ export function ModeToggle() {
               <HugeiconsIcon
                 icon={Check}
                 size={18}
-                className="ml-auto text-yellow-600"
+                className="ml-auto text-primary"
               />
             )}
           </DropdownMenuItem>
@@ -91,7 +99,7 @@ export function ModeToggle() {
               <HugeiconsIcon
                 icon={Check}
                 size={18}
-                className="ml-auto text-yellow-600"
+                className="ml-auto text-primary"
               />
             )}
           </DropdownMenuItem>
