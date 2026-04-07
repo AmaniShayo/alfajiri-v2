@@ -1,73 +1,102 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Laptop, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import * as React from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Sun02Icon,
+  Moon02Icon,
+  Laptop,
+  Check,
+} from "@hugeicons/core-free-icons"
 
-import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes"
+
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 
 export function ModeToggle() {
-  const { setTheme, theme } = useTheme();
+  const { setTheme, theme } = useTheme()
+
+  const iconSize = 20
 
   return (
     <div>
       <DropdownMenu>
-        <DropdownMenuTrigger
-          asChild
-          className="border-none shadow-none rounded-full">
+        <DropdownMenuTrigger className="rounded-full border-none shadow-none">
           <Button variant="outline" size="icon">
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <HugeiconsIcon
+              icon={Sun02Icon}
+              size={iconSize}
+              className="scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
+            />
+            <HugeiconsIcon
+              icon={Moon02Icon}
+              size={iconSize}
+              className="absolute scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
+            />
             <span className="sr-only">Toggle theme</span>
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="end">
+          {/* Light */}
           <DropdownMenuItem
             onClick={() => setTheme("light")}
-            className={`${
-              theme === "light"
-                ? "bg-yellow-600 text-white focus:bg-yellow-600 focus:text-white"
-                : "cursor-pointer"
-            }`}>
-            <Sun
-              className={`${theme === "light" ? "text-primary-foreground" : "text-primary"} mr-2 h-4 w-4`}
-            />
+            className="cursor-pointer"
+          >
+            <HugeiconsIcon icon={Sun02Icon} size={iconSize} className="mr-2" />
             Light
+            {theme === "light" && (
+              <HugeiconsIcon
+                icon={Check}
+                size={18}
+                className="ml-auto text-yellow-600"
+              />
+            )}
           </DropdownMenuItem>
-          <div className="p-0.5"></div>
+
+          <div className="p-0.5" />
+
+          {/* Dark */}
           <DropdownMenuItem
             onClick={() => setTheme("dark")}
-            className={`${
-              theme === "dark"
-                ? "bg-yellow-600 text-white focus:bg-yellow-600 focus:text-white"
-                : "cursor-pointer"
-            }`}>
-            <Moon
-              className={`${theme === "dark" ? "text-white" : "text-primary"} mr-2 h-4 w-4`}
-            />
+            className="cursor-pointer"
+          >
+            <HugeiconsIcon icon={Moon02Icon} size={iconSize} className="mr-2" />
             Dark
+            {theme === "dark" && (
+              <HugeiconsIcon
+                icon={Check}
+                size={18}
+                className="ml-auto text-yellow-600"
+              />
+            )}
           </DropdownMenuItem>
-          <div className="p-0.5"></div>
+
+          <div className="p-0.5" />
+
+          {/* System */}
           <DropdownMenuItem
             onClick={() => setTheme("system")}
-            className={`${
-              theme === "system"
-                ? "bg-yellow-600 text-white focus:bg-yellow-600 focus:text-white"
-                : "cursor-pointer"
-            }`}>
-            <Laptop
-              className={`${theme === "system" ? "text-white" : "text-primary"} mr-2 h-4 w-4`}
-            />
+            className="cursor-pointer"
+          >
+            <HugeiconsIcon icon={Laptop} size={iconSize} className="mr-2" />
             System
+            {theme === "system" && (
+              <HugeiconsIcon
+                icon={Check}
+                size={18}
+                className="ml-auto text-yellow-600"
+              />
+            )}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
+  )
 }

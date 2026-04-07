@@ -1,10 +1,16 @@
-"use client";
+"use client"
 
-import { BadgeCheck, LockIcon, LogOut } from "lucide-react";
-import { useAuth } from "@/context/authContext";
-import useUserProfile from "@/context/userContext";
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  LockIcon,
+  BadgeCheck,
+  Logout01Icon,
+} from "@hugeicons/core-free-icons"
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/context/authContext"
+import useUserProfile from "@/context/userContext"
+
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,43 +18,47 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
 
 export function UserMenu() {
-  const { user } = useUserProfile();
-  const { logout } = useAuth();
-  const router = useRouter();
+  const { user } = useUserProfile()
+  const { logout } = useAuth()
+  const router = useRouter()
 
   return (
     <div>
       {user && (
         <DropdownMenu>
           <DropdownMenuTrigger
-            className="active:bg-transparent hover:bg-transparent"
-            asChild>
+            className="hover:bg-transparent active:bg-transparent"
+            
+          >
             <div className="flex items-center">
               <Avatar className="h-8 w-8 cursor-pointer">
-                <AvatarFallback className="rounded-full border font-bold text-xl bg-yellow-600 text-white">
-                  {`${(user?.firstName?.[0] ?? "").toUpperCase()}`}
+                <AvatarFallback className="rounded-full border bg-yellow-600 text-xl font-bold text-white">
+                  {(user?.firstName?.[0] ?? "").toUpperCase()}
                 </AvatarFallback>
               </Avatar>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-sm bg-background"
-            side={"bottom"}
+            side="bottom"
             align="end"
-            sideOffset={8}>
+            sideOffset={8}
+          >
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar className="h-8 w-8 rounded-md">
-                <AvatarFallback className="rounded-full border font-bold text-xl">
-                  {`${(user?.firstName?.[0] ?? "").toUpperCase()}`}
+                <AvatarFallback className="rounded-full border text-xl font-bold">
+                  {(user?.firstName?.[0] ?? "").toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{`${user.firstName} ${user.lastName}`}</span>
+                <span className="truncate font-semibold">
+                  {`${user.firstName} ${user.lastName}`}
+                </span>
               </div>
             </div>
             <DropdownMenuSeparator />
@@ -56,26 +66,37 @@ export function UserMenu() {
               <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={() => {
-                  router.push("/change-password");
-                }}>
-                <LockIcon className="text-primary" />
+                  router.push("/change-password")
+                }}
+              >
+                <HugeiconsIcon
+                  icon={LockIcon}
+                  className="mr-2 text-primary"
+                />
                 Change Password
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <BadgeCheck className="text-primary" />
+                <HugeiconsIcon
+                  icon={BadgeCheck}
+                  className="mr-2 text-primary"
+                />
                 Account
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => logout()}>
-              <LogOut className="text-primary" />
+              onClick={() => logout()}
+            >
+              <HugeiconsIcon
+                icon={Logout01Icon}
+                className="mr-2 text-primary"
+              />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
     </div>
-  );
+  )
 }
