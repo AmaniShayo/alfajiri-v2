@@ -43,7 +43,7 @@ function RootLayout({
                             <AppSidebar />
                             <div className="h-full w-full overflow-hidden bg-background md:rounded-4xl md:shadow">
                               <Header />
-                              <div className="h-[calc(100%-48px)] p-2">
+                              <div className="h-[calc(100%-48px)]">
                                 {children}
                               </div>
                             </div>

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo } from "react"
 
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -91,15 +91,16 @@ type PaymentMethod = "Cash" | "Bank" | "Mobile"
 export default function PointOfSale() {
   const { products, productsLoading } = useProducts()
   const { customers, customersLoading, customersRefetch } = useCustomers()
+
   const [initialPaymentEdited, setInitialPaymentEdited] = useState(false)
   const [searchProduct, setSearchProduct] = useState("")
   const [cart, setCart] = useState<CartItem[]>([])
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [quantity, setQuantity] = useState(1)
   const [customPrice, setCustomPrice] = useState<number | "">("")
-  const [returnedReturnables, setReturnedReturnables] = useState<
-    ReturnableEntry[]
-  >([])
+  const [returnedQuantities, setReturnedQuantities] = useState<
+    Record<string, number>
+  >({})
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
     null
   )
@@ -110,43 +111,41 @@ export default function PointOfSale() {
   const [initialPaymentAmount, setInitialPaymentAmount] = useState<number | "">(
     ""
   )
-  const [sheetOpen, setSheetOpen] = useState(false)
 
-  useEffect(() => {
+  const returnedReturnables = useMemo(() => {
     const returnableMap = new Map<string, ReturnableEntry>()
 
     cart.forEach((item) => {
       if (item.returnableGroup && item.returnableName) {
-        const current = returnableMap.get(item.returnableGroup) || {
-          groupId: item.returnableGroup,
-          name: item.returnableName,
-          returnedQuantity: 0,
-          maxPossible: 0,
+        const groupId = item.returnableGroup
+
+        if (!returnableMap.has(groupId)) {
+          returnableMap.set(groupId, {
+            groupId,
+            name: item.returnableName,
+            returnedQuantity: returnedQuantities[groupId] ?? item.quantity,
+            maxPossible: 0,
+          })
         }
 
-        current.maxPossible += item.quantity
-        if (!returnableMap.has(item.returnableGroup)) {
-          current.returnedQuantity = item.quantity
-        }
-
-        returnableMap.set(item.returnableGroup, current)
+        const entry = returnableMap.get(groupId)!
+        entry.maxPossible += item.quantity
       }
     })
 
-    setReturnedReturnables(Array.from(returnableMap.values()))
-  }, [cart])
+    return Array.from(returnableMap.values())
+  }, [cart, returnedQuantities])
 
   const updateReturnedQuantity = (groupId: string, value: number) => {
-    setReturnedReturnables((prev) =>
-      prev.map((entry) =>
-        entry.groupId === groupId
-          ? {
-              ...entry,
-              returnedQuantity: Math.max(0, Math.min(value, entry.maxPossible)),
-            }
-          : entry
-      )
-    )
+    const entry = returnedReturnables.find((r) => r.groupId === groupId)
+    if (!entry) return
+
+    const newQuantity = Math.max(0, Math.min(value, entry.maxPossible))
+
+    setReturnedQuantities((prev) => ({
+      ...prev,
+      [groupId]: newQuantity,
+    }))
   }
 
   const createSaleMutation = trpc.sale.createSale.useMutation({
@@ -155,10 +154,11 @@ export default function PointOfSale() {
       setCart([])
       setSelectedCustomerId(null)
       setInitialPaymentAmount("")
+      setInitialPaymentEdited(false)
+      setReturnedQuantities({})
     },
     onError: (err) => {
       console.log(err)
-
       toast.error(`Failed to create sale: ${err.message}`)
     },
   })
@@ -246,10 +246,6 @@ export default function PointOfSale() {
 
   const removeFromCart = (productId: string) => {
     setCart((prev) => prev.filter((item) => item.productId !== productId))
-    if (cart.length == 0) {
-      setInitialPaymentEdited(false)
-      setInitialPaymentAmount("")
-    }
   }
 
   const subtotal = cart.reduce(
@@ -261,7 +257,7 @@ export default function PointOfSale() {
 
   const handleCompleteSale = () => {
     if (cart.length === 0) {
-      toast.success("Cart is empty")
+      toast.error("Cart is empty")
       return
     }
 
@@ -305,11 +301,9 @@ export default function PointOfSale() {
 
   return (
     <div className="h-[calc(100vh-48px)]">
-      {/* Header */}
-
-      <div className="grid h-full grid-cols-3 gap-0 max-md:grid-cols-1 md:gap-2">
+      <div className="grid h-full grid-cols-3 gap-0 max-md:grid-cols-1 md:gap-2 md:p-2">
         <div className="relative col-span-2 overflow-y-auto max-md:hidden">
-          <div className="absolute flex h-11 w-full justify-between border-b bg-white pb-2 dark:bg-black">
+          <div className="absolute top-0 flex h-11 w-full justify-between pb-2">
             <div className="relative max-w-md">
               <Input
                 placeholder="Search products by name"
@@ -339,7 +333,7 @@ export default function PointOfSale() {
               <p className="font-bold">{products?.length}</p>
             </div>
           </div>
-          <div className="mt-11 h-[calc(100%-48px)] overflow-y-auto py-2">
+          <div className="mt-9 h-[calc(100%-48px)] overflow-y-auto py-2">
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
               {visibleProducts.map((product) => (
                 <button
@@ -351,10 +345,10 @@ export default function PointOfSale() {
                     setCustomPrice("")
                   }}
                   className={cn(
-                    "h-fit rounded-md border p-2 text-left transition-all",
+                    "h-fit rounded-4xl border p-3 text-left transition-all",
                     product.isAdded
                       ? "cursor-not-allowed border-muted-foreground/30 bg-muted/60 opacity-60"
-                      : "hover:border-yellow-600/50 hover:shadow-sm active:scale-[0.98]",
+                      : "hover:shadow-sm active:scale-[0.98]",
                     product.availableQuantity < 1 &&
                       "cursor-not-allowed opacity-50"
                   )}
@@ -387,14 +381,12 @@ export default function PointOfSale() {
           </div>
         </div>
 
-        {/* Cart & Controls */}
-        <div className="col-span-1 -mt-1.5 h-[calc(100vh-48px)] md:border-l">
-          <div className="flex h-full flex-col justify-between">
-            {/* product select for mobile */}
+        <div className="col-span-1 h-[calc(100vh-82px)] bg-accent max-md:h-[calc(100vh-48px)] md:rounded-4xl">
+          <div className="flex h-full flex-col justify-between p-2">
             <div className="flex w-full justify-end py-2 md:hidden">
-              <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <Sheet>
                 <SheetTrigger>
-                  <Button className="w-fit justify-center rounded-md bg-yellow-600 text-white hover:bg-yellow-600/90 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90">
+                  <Button className="w-fit justify-center rounded-md bg-primary text-white hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/90">
                     <HugeiconsIcon
                       icon={PlusSignIcon}
                       className="mr-2 h-4 w-4"
@@ -402,7 +394,7 @@ export default function PointOfSale() {
                     <span className="text-lg">Add Items</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent className="w-full p-2 sm:max-w-md">
+                <SheetContent className="w-full! p-2 sm:max-w-md">
                   <SheetHeader>
                     <SheetTitle>Add Items</SheetTitle>
                   </SheetHeader>
@@ -446,10 +438,9 @@ export default function PointOfSale() {
                             setSelectedProduct(product)
                             setQuantity(1)
                             setCustomPrice("")
-                            setSheetOpen(false)
                           }}
                           className={cn(
-                            "h-fit rounded-md border p-2 text-left transition-all",
+                            "h-fit rounded-4xl border p-3 text-left transition-all",
                             product.isAdded
                               ? "cursor-not-allowed border-muted-foreground/30 bg-muted/60 opacity-60"
                               : "hover:border-yellow-600/50 hover:shadow-sm active:scale-[0.98]",
@@ -486,15 +477,15 @@ export default function PointOfSale() {
                 </SheetContent>
               </Sheet>
             </div>
-            {/* Customer Selector */}
-            <div className="flex h-12 w-full items-center justify-between border-b md:pl-2">
+
+            <div className="flex h-11 w-full items-center justify-between">
               <Popover open={customerOpen} onOpenChange={setCustomerOpen}>
                 <PopoverTrigger className="w-full flex-1">
                   <Button
                     variant="outline"
                     role="combobox"
                     aria-expanded={customerOpen}
-                    className="-mt-0.5 w-full flex-1 cursor-pointer justify-between rounded-md shadow-none hover:bg-background"
+                    className="w-full flex-1 cursor-pointer justify-between rounded-4xl shadow-none hover:bg-background"
                   >
                     {selectedCustomer ? (
                       `${selectedCustomer.customerName} (${selectedCustomer.phoneNumber})`
@@ -509,13 +500,10 @@ export default function PointOfSale() {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent
-                  className="w-(--radix-popover-trigger-width) p-0"
-                  align="start"
-                >
+                <PopoverContent className="w-full! p-0" align="start">
                   <Command>
                     <CommandInput placeholder="Search customer..." />
-                    <CommandList>
+                    <CommandList className="w-full!">
                       <CommandEmpty>No customer found.</CommandEmpty>
                       <CommandGroup>
                         <CommandItem
@@ -562,60 +550,48 @@ export default function PointOfSale() {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <div className="p-1"></div>
               <div className="flex gap-2">
                 <CustomerDialog
                   trigger={
-                    <div className="">
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Button variant={"ghost"} className="h-fit w-fit">
-                            <HugeiconsIcon
-                              icon={UserAdd01Icon}
-                              className="h-4 w-4"
-                            />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Add new customer</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button variant="ghost" className="h-fit w-fit">
+                          <HugeiconsIcon
+                            icon={UserAdd01Icon}
+                            className="h-4 w-4"
+                          />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Add new customer</p>
+                      </TooltipContent>
+                    </Tooltip>
                   }
                   onSuccess={() => customersRefetch()}
                 />
-                <div
-                  onClick={() => {
-                    if (cart.length === 0) {
-                      return
-                    }
-                    setShowResetConfirm(true)
-                  }}
-                >
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Button
-                        disabled={cart.length === 0}
-                        variant={"ghost"}
-                        className="h-fit w-fit"
-                      >
-                        <HugeiconsIcon
-                          icon={ListRestartIcon}
-                          className="h-4 w-4"
-                        />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Reset Cart</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      disabled={cart.length === 0}
+                      variant="ghost"
+                      className="h-fit w-fit"
+                      onClick={() => setShowResetConfirm(true)}
+                    >
+                      <HugeiconsIcon
+                        icon={ListRestartIcon}
+                        className="h-4 w-4"
+                      />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Reset Cart</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </div>
 
-            {/* Cart Items */}
-            <div className="h-full flex-1 overflow-y-auto shadow-inner">
-              <div className="h-full space-y-2 pt-2 md:p-2">
+            <div className="h-full flex-1 overflow-y-auto">
+              <div className="h-full space-y-2">
                 {cart.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
                     <HugeiconsIcon
@@ -628,12 +604,12 @@ export default function PointOfSale() {
                   cart.map((item) => (
                     <div
                       key={item.productId}
-                      className="relative overflow-hidden rounded-md border bg-background p-3"
+                      className="relative overflow-hidden rounded-4xl border bg-background p-3"
                     >
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="absolute top-0 right-0 h-8 w-8 rounded-none rounded-tr-md rounded-bl-md border bg-red-600/10 text-destructive transition-all hover:bg-red-600/20 hover:text-destructive"
+                        className="absolute top-0 right-0 h-8 w-8 rounded-none rounded-tr-4xl rounded-bl-md border bg-red-600/10 text-destructive transition-all hover:bg-red-600/20 hover:text-destructive"
                         onClick={() => removeFromCart(item.productId)}
                       >
                         <HugeiconsIcon
@@ -714,8 +690,7 @@ export default function PointOfSale() {
               </div>
             </div>
 
-            {/* Summary & Payment */}
-            <div className="border-t bg-background py-2 md:p-2">
+            <div className="rounded-4xl border-t bg-background p-3">
               <div className="space-y-2">
                 {returnedReturnables.length > 0 && (
                   <>
@@ -734,7 +709,7 @@ export default function PointOfSale() {
                           {returnedReturnables.map((ret) => (
                             <div
                               key={ret.groupId}
-                              className="min-w-35 rounded-lg border bg-muted/20 p-2"
+                              className="min-w-35 rounded-4xl border bg-muted/20 p-2"
                             >
                               <div className="mb-1 max-w-30 truncate text-xs text-muted-foreground">
                                 {ret.name}
@@ -795,18 +770,19 @@ export default function PointOfSale() {
                     <Separator className="my-2" />
                   </>
                 )}
+
                 <div className="flex items-center gap-2">
-                  <Label className="min-w-20">Payment:</Label>
+                  <Label className="w-fit">Payment:</Label>
                   <div className="flex flex-1 gap-2">
                     <Button
-                      disabled={cart.length === 0 || initialPaymentAmount === 0}
+                      disabled={cart.length === 0}
                       variant={
                         selectedPaymentMethod === "Cash" ? "default" : "outline"
                       }
                       size="sm"
                       className={`flex-1 ${
                         selectedPaymentMethod === "Cash"
-                          ? "bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90"
+                          ? "bg-primary text-white hover:bg-primary/90 hover:text-white dark:bg-primary dark:text-white dark:hover:bg-primary/90"
                           : ""
                       }`}
                       onClick={() => setSelectedPaymentMethod("Cash")}
@@ -818,14 +794,14 @@ export default function PointOfSale() {
                       Cash
                     </Button>
                     <Button
-                      disabled={cart.length === 0 || initialPaymentAmount === 0}
+                      disabled={cart.length === 0}
                       variant={
                         selectedPaymentMethod === "Bank" ? "default" : "outline"
                       }
                       size="sm"
                       className={`flex-1 ${
                         selectedPaymentMethod === "Bank"
-                          ? "bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90"
+                          ? "bg-primary text-white hover:bg-primary/90 hover:text-white dark:bg-primary dark:text-white dark:hover:bg-primary/90"
                           : ""
                       }`}
                       onClick={() => setSelectedPaymentMethod("Bank")}
@@ -837,7 +813,7 @@ export default function PointOfSale() {
                       Bank
                     </Button>
                     <Button
-                      disabled={cart.length === 0 || initialPaymentAmount === 0}
+                      disabled={cart.length === 0}
                       variant={
                         selectedPaymentMethod === "Mobile"
                           ? "default"
@@ -846,7 +822,7 @@ export default function PointOfSale() {
                       size="sm"
                       className={`flex-1 ${
                         selectedPaymentMethod === "Mobile"
-                          ? "bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90"
+                          ? "bg-primary text-white hover:bg-primary/90 hover:text-white dark:bg-primary dark:text-white dark:hover:bg-primary/90"
                           : ""
                       }`}
                       onClick={() => setSelectedPaymentMethod("Mobile")}
@@ -859,10 +835,12 @@ export default function PointOfSale() {
                     </Button>
                   </div>
                 </div>
+
                 <Separator className="my-2" />
+
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex gap-2">
-                    <Label className="">Paid:</Label>
+                    <Label>Paid:</Label>
                     <Input
                       type="number"
                       value={
@@ -875,13 +853,13 @@ export default function PointOfSale() {
                         )
                       }}
                       placeholder="0"
-                      className="w-32 flex-1"
+                      className="w-28 flex-1"
                     />
                   </div>
                   <div className="flex gap-2">
-                    <Label className="">Balance:</Label>
-                    <div className="w-32 flex-1 rounded-md border px-3 py-2 text-left text-sm whitespace-nowrap text-muted-foreground">
-                      {balanceDue.toLocaleString()} TZS
+                    <Label>Balance:</Label>
+                    <div className="w-28 flex-1 rounded-4xl bg-accent px-3 py-2 text-left text-sm whitespace-nowrap text-muted-foreground">
+                      {balanceDue.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -891,18 +869,18 @@ export default function PointOfSale() {
 
               <div className="mb-3 flex justify-between text-lg font-bold">
                 <span>Total:</span>
-                <span className={""}>{subtotal.toLocaleString()} TZS</span>
+                <span>{subtotal.toLocaleString()} TZS</span>
               </div>
 
               <Button
-                className="h-fit w-full bg-yellow-600 py-3 hover:bg-yellow-600/90 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90"
+                className="w-full"
                 size="lg"
                 onClick={handleCompleteSale}
                 disabled={createSaleMutation.isPending || cart.length === 0}
               >
                 {createSaleMutation.isPending
                   ? "Processing..."
-                  : "COMPLETE SALE"}
+                  : "Complete Sale"}
               </Button>
             </div>
           </div>
@@ -937,6 +915,7 @@ export default function PointOfSale() {
                 setCart([])
                 setInitialPaymentEdited(false)
                 setInitialPaymentAmount("")
+                setReturnedQuantities({})
                 setShowResetConfirm(false)
                 toast.info("Cart has been cleared")
               }}
@@ -1025,7 +1004,7 @@ export default function PointOfSale() {
                     Number(customPrice) < selectedProduct.buyingPrice)
                 }
                 onClick={addToCart}
-                className="bg-yellow-600 hover:bg-yellow-600/90 dark:bg-yellow-600"
+                className=""
               >
                 Add to Cart
               </Button>
