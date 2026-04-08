@@ -1,42 +1,43 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+"use client"
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react"
+
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  Plus,
-  Minus,
-  Trash2,
-  AlertTriangle,
-  CreditCard,
-  Smartphone,
-  Banknote,
-  UserPlus2Icon,
-  ListRestart,
-  ScrollText,
-  UserRoundSearchIcon,
+  PlusSignIcon,
+  MinusSignIcon,
+  Delete02Icon,
+  Alert02Icon,
+  CreditCardIcon,
+  SmartPhone02Icon,
+  Money04Icon,
+  UserAdd01Icon,
+  ListRestartIcon,
+  ShoppingCart01Icon,
+  UserSearch01Icon,
   Check,
-  RotateCcw,
-  PlusIcon,
-} from "lucide-react";
+  Rotate01Icon,
+} from "@hugeicons/core-free-icons"
 
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/tooltip"
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
 import {
   Command,
   CommandEmpty,
@@ -44,75 +45,75 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from "@/components/ui/command"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/ui/popover"
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/sheet"
+import { cn } from "@/lib/utils"
 
-import { useProducts } from "@/context/productProvider";
-import { useCustomers } from "@/context/customerProvider";
-import { trpc } from "@/lib/trpc";
-import { toast } from "sonner";
-import { CustomerDialog } from "@/components/createAndUpdateCustomer";
+import { useProducts } from "@/context/productProvider"
+import { useCustomers } from "@/context/customerProvider"
+import { trpc } from "@/lib/trpc"
+import { toast } from "sonner"
+import { CustomerDialog } from "@/components/createAndUpdateCustomer"
 
 type CartItem = {
-  productId: string;
-  name: string;
-  code?: string;
-  quantity: number;
-  sellingPrice: number;
-  finalPrice: number;
-  buyingPrice: number;
-  availableQuantity: number;
-  returnableGroup?: string;
-  returnableName?: string;
-};
+  productId: string
+  name: string
+  code?: string
+  quantity: number
+  sellingPrice: number
+  finalPrice: number
+  buyingPrice: number
+  availableQuantity: number
+  returnableGroup?: string
+  returnableName?: string
+}
 
 type ReturnableEntry = {
-  groupId: string;
-  name: string;
-  returnedQuantity: number;
-  maxPossible: number;
-};
+  groupId: string
+  name: string
+  returnedQuantity: number
+  maxPossible: number
+}
 
-type PaymentMethod = "Cash" | "Bank" | "Mobile";
+type PaymentMethod = "Cash" | "Bank" | "Mobile"
 
 export default function PointOfSale() {
-  const { products, productsLoading } = useProducts();
-  const { customers, customersLoading, customersRefetch } = useCustomers();
-  const [initialPaymentEdited, setInitialPaymentEdited] = useState(false);
-  const [searchProduct, setSearchProduct] = useState("");
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [quantity, setQuantity] = useState(1);
-  const [customPrice, setCustomPrice] = useState<number | "">("");
+  const { products, productsLoading } = useProducts()
+  const { customers, customersLoading, customersRefetch } = useCustomers()
+  const [initialPaymentEdited, setInitialPaymentEdited] = useState(false)
+  const [searchProduct, setSearchProduct] = useState("")
+  const [cart, setCart] = useState<CartItem[]>([])
+  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [quantity, setQuantity] = useState(1)
+  const [customPrice, setCustomPrice] = useState<number | "">("")
   const [returnedReturnables, setReturnedReturnables] = useState<
     ReturnableEntry[]
-  >([]);
+  >([])
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
-    null,
-  );
-  const [customerOpen, setCustomerOpen] = useState(false);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
+    null
+  )
+  const [customerOpen, setCustomerOpen] = useState(false)
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<PaymentMethod>("Cash");
+    useState<PaymentMethod>("Cash")
   const [initialPaymentAmount, setInitialPaymentAmount] = useState<number | "">(
-    "",
-  );
-  const [sheetOpen, setSheetOpen] = useState(false);
+    ""
+  )
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   useEffect(() => {
-    const returnableMap = new Map<string, ReturnableEntry>();
+    const returnableMap = new Map<string, ReturnableEntry>()
 
     cart.forEach((item) => {
       if (item.returnableGroup && item.returnableName) {
@@ -121,19 +122,19 @@ export default function PointOfSale() {
           name: item.returnableName,
           returnedQuantity: 0,
           maxPossible: 0,
-        };
-
-        current.maxPossible += item.quantity;
-        if (!returnableMap.has(item.returnableGroup)) {
-          current.returnedQuantity = item.quantity;
         }
 
-        returnableMap.set(item.returnableGroup, current);
-      }
-    });
+        current.maxPossible += item.quantity
+        if (!returnableMap.has(item.returnableGroup)) {
+          current.returnedQuantity = item.quantity
+        }
 
-    setReturnedReturnables(Array.from(returnableMap.values()));
-  }, [cart]);
+        returnableMap.set(item.returnableGroup, current)
+      }
+    })
+
+    setReturnedReturnables(Array.from(returnableMap.values()))
+  }, [cart])
 
   const updateReturnedQuantity = (groupId: string, value: number) => {
     setReturnedReturnables((prev) =>
@@ -143,68 +144,65 @@ export default function PointOfSale() {
               ...entry,
               returnedQuantity: Math.max(0, Math.min(value, entry.maxPossible)),
             }
-          : entry,
-      ),
-    );
-  };
+          : entry
+      )
+    )
+  }
 
   const createSaleMutation = trpc.sale.createSale.useMutation({
     onSuccess: () => {
-      toast.success("Sale created successfully");
-      setCart([]);
-      setSelectedCustomerId(null);
-      setInitialPaymentAmount("");
+      toast.success("Sale created successfully")
+      setCart([])
+      setSelectedCustomerId(null)
+      setInitialPaymentAmount("")
     },
     onError: (err) => {
-      console.log(err);
+      console.log(err)
 
-      toast.error(`Failed to create sale: ${err.message}`);
+      toast.error(`Failed to create sale: ${err.message}`)
     },
-  });
+  })
 
-  const isLoading = productsLoading || customersLoading;
+  const isLoading = productsLoading || customersLoading
 
   const visibleProducts = useMemo(() => {
-    if (!products) return [];
+    if (!products) return []
 
-    const cartProductIds = new Set(cart.map((item) => item.productId));
+    const cartProductIds = new Set(cart.map((item) => item.productId))
 
     return products
       .filter(
         (p) =>
           p.productName.toLowerCase().includes(searchProduct.toLowerCase()) ||
-          (p.code &&
-            p.code.toLowerCase().includes(searchProduct.toLowerCase())),
+          (p.code && p.code.toLowerCase().includes(searchProduct.toLowerCase()))
       )
       .map((p) => ({
         ...p,
         isAdded: cartProductIds.has(p._id),
-      }));
-  }, [searchProduct, products, cart]);
+      }))
+  }, [searchProduct, products, cart])
 
-  const selectedCustomer = customers?.find((c) => c._id === selectedCustomerId);
+  const selectedCustomer = customers?.find((c) => c._id === selectedCustomerId)
 
   const addToCart = () => {
-    if (!selectedProduct) return;
-    if (quantity < 1) return;
+    if (!selectedProduct) return
+    if (quantity < 1) return
 
     const price =
       Number(customPrice) > 0
         ? Number(customPrice)
-        : selectedProduct.sellingPrice;
+        : selectedProduct.sellingPrice
 
-    const existing = cart.find(
-      (item) => item.productId === selectedProduct._id,
-    );
+    const existing = cart.find((item) => item.productId === selectedProduct._id)
 
     if (existing) {
       setCart((prev) =>
         prev.map((item) =>
           item.productId === selectedProduct._id
             ? { ...item, quantity: item.quantity + quantity, finalPrice: price }
-            : item,
-        ),
-      );
+            : item
+        )
+      )
     } else {
       setCart((prev) => [
         {
@@ -220,51 +218,51 @@ export default function PointOfSale() {
           returnableName: selectedProduct.returnableGroup?.name || undefined,
         },
         ...prev,
-      ]);
+      ])
     }
 
-    setSelectedProduct(null);
-    setQuantity(1);
-    setCustomPrice("");
-  };
+    setSelectedProduct(null)
+    setQuantity(1)
+    setCustomPrice("")
+  }
 
   const updateCartItemQuantity = (productId: string, newQty: number) => {
-    if (newQty < 1) return;
+    if (newQty < 1) return
     setCart((prev) =>
       prev.map((item) =>
-        item.productId === productId ? { ...item, quantity: newQty } : item,
-      ),
-    );
-  };
+        item.productId === productId ? { ...item, quantity: newQty } : item
+      )
+    )
+  }
 
   const updateCartItemPrice = (productId: string, newPrice: number) => {
-    if (newPrice <= 0) return;
+    if (newPrice <= 0) return
     setCart((prev) =>
       prev.map((item) =>
-        item.productId === productId ? { ...item, finalPrice: newPrice } : item,
-      ),
-    );
-  };
+        item.productId === productId ? { ...item, finalPrice: newPrice } : item
+      )
+    )
+  }
 
   const removeFromCart = (productId: string) => {
-    setCart((prev) => prev.filter((item) => item.productId !== productId));
+    setCart((prev) => prev.filter((item) => item.productId !== productId))
     if (cart.length == 0) {
-      setInitialPaymentEdited(false);
-      setInitialPaymentAmount("");
+      setInitialPaymentEdited(false)
+      setInitialPaymentAmount("")
     }
-  };
+  }
 
   const subtotal = cart.reduce(
     (sum, item) => sum + item.quantity * item.finalPrice,
-    0,
-  );
-  const initialPaid = Number(initialPaymentAmount) || 0;
-  const balanceDue = initialPaymentEdited ? subtotal - initialPaid : 0;
+    0
+  )
+  const initialPaid = Number(initialPaymentAmount) || 0
+  const balanceDue = initialPaymentEdited ? subtotal - initialPaid : 0
 
   const handleCompleteSale = () => {
     if (cart.length === 0) {
-      toast.success("Cart is empty");
-      return;
+      toast.success("Cart is empty")
+      return
     }
 
     const payload = {
@@ -290,28 +288,28 @@ export default function PointOfSale() {
         returnableId: rr.groupId,
         quantity: rr.returnedQuantity,
       })),
-    };
-    createSaleMutation.mutate(payload);
-  };
+    }
+    createSaleMutation.mutate(payload)
+  }
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           <p>Loading POS data...</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
     <div className="h-[calc(100vh-48px)]">
       {/* Header */}
 
-      <div className="grid grid-cols-3 max-md:grid-cols-1 md:gap-2 gap-0 h-full">
-        <div className="col-span-2 overflow-y-auto relative max-md:hidden">
-          <div className="absolute w-full h-11 pb-2 border-b bg-white dark:bg-black flex justify-between">
+      <div className="grid h-full grid-cols-3 gap-0 max-md:grid-cols-1 md:gap-2">
+        <div className="relative col-span-2 overflow-y-auto max-md:hidden">
+          <div className="absolute flex h-11 w-full justify-between border-b bg-white pb-2 dark:bg-black">
             <div className="relative max-w-md">
               <Input
                 placeholder="Search products by name"
@@ -320,7 +318,7 @@ export default function PointOfSale() {
                 className="pl-10"
               />
               <svg
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground"
+                className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -342,34 +340,34 @@ export default function PointOfSale() {
             </div>
           </div>
           <div className="mt-11 h-[calc(100%-48px)] overflow-y-auto py-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
               {visibleProducts.map((product) => (
                 <button
                   key={product._id}
                   disabled={product.isAdded || product.availableQuantity < 1}
                   onClick={() => {
-                    setSelectedProduct(product);
-                    setQuantity(1);
-                    setCustomPrice("");
+                    setSelectedProduct(product)
+                    setQuantity(1)
+                    setCustomPrice("")
                   }}
                   className={cn(
                     "h-fit rounded-md border p-2 text-left transition-all",
                     product.isAdded
-                      ? "bg-muted/60 border-muted-foreground/30 opacity-60 cursor-not-allowed"
-                      : "hover:border-yellow-600/50 active:scale-[0.98] hover:shadow-sm",
+                      ? "cursor-not-allowed border-muted-foreground/30 bg-muted/60 opacity-60"
+                      : "hover:border-yellow-600/50 hover:shadow-sm active:scale-[0.98]",
                     product.availableQuantity < 1 &&
-                      "opacity-50 cursor-not-allowed",
+                      "cursor-not-allowed opacity-50"
                   )}
                 >
-                  <div className="font-medium line-clamp-2">
+                  <div className="line-clamp-2 font-medium">
                     {product.productName}
                   </div>
-                  <div className="mt-2 flex items-baseline gap-1.5 justify-between">
+                  <div className="mt-2 flex items-baseline justify-between gap-1.5">
                     <span className="text-lg font-bold">
                       {product.sellingPrice.toLocaleString()} TZS
                     </span>
                   </div>
-                  <div className="mt-1 flex items-baseline gap-1.5 justify-between">
+                  <div className="mt-1 flex items-baseline justify-between gap-1.5">
                     <span className="text-xs text-muted-foreground">
                       Stock: {product.availableQuantity}{" "}
                       {product.measurementUnit}
@@ -377,7 +375,7 @@ export default function PointOfSale() {
                     {product.isAdded && (
                       <Badge
                         variant="secondary"
-                        className="text-xs border-muted-foreground/30 rounded-md"
+                        className="rounded-md border-muted-foreground/30 text-xs"
                       >
                         Added
                       </Badge>
@@ -390,22 +388,25 @@ export default function PointOfSale() {
         </div>
 
         {/* Cart & Controls */}
-        <div className="col-span-1 md:border-l h-[calc(100vh-48px)] -mt-1.5">
-          <div className="h-full flex flex-col justify-between">
+        <div className="col-span-1 -mt-1.5 h-[calc(100vh-48px)] md:border-l">
+          <div className="flex h-full flex-col justify-between">
             {/* product select for mobile */}
-            <div className="w-full md:hidden py-2 flex justify-end">
+            <div className="flex w-full justify-end py-2 md:hidden">
               <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button className="w-fit justify-center rounded-md bg-yellow-600 text-white hover:bg-yellow-600/90 dark:bg-yellow-600 dark:hover:bg-yellow-600/90 dark:text-white">
-                    <PlusIcon size={16} className="" />
+                <SheetTrigger>
+                  <Button className="w-fit justify-center rounded-md bg-yellow-600 text-white hover:bg-yellow-600/90 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90">
+                    <HugeiconsIcon
+                      icon={PlusSignIcon}
+                      className="mr-2 h-4 w-4"
+                    />
                     <span className="text-lg">Add Items</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent className="w-full sm:max-w-md p-2">
+                <SheetContent className="w-full p-2 sm:max-w-md">
                   <SheetHeader>
                     <SheetTitle>Add Items</SheetTitle>
                   </SheetHeader>
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="mb-4 flex items-center justify-between">
                     <div className="relative max-w-md flex-1">
                       <Input
                         placeholder="Search products by name"
@@ -414,7 +415,7 @@ export default function PointOfSale() {
                         className="pl-10"
                       />
                       <svg
-                        className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground"
+                        className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-muted-foreground"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -428,7 +429,7 @@ export default function PointOfSale() {
                       </svg>
                     </div>
                     <div className="ml-4">
-                      <p className="font-semibold text-muted-foreground text-sm">
+                      <p className="text-sm font-semibold text-muted-foreground">
                         Total: {products?.length}
                       </p>
                     </div>
@@ -442,29 +443,29 @@ export default function PointOfSale() {
                             product.isAdded || product.availableQuantity < 1
                           }
                           onClick={() => {
-                            setSelectedProduct(product);
-                            setQuantity(1);
-                            setCustomPrice("");
-                            setSheetOpen(false);
+                            setSelectedProduct(product)
+                            setQuantity(1)
+                            setCustomPrice("")
+                            setSheetOpen(false)
                           }}
                           className={cn(
                             "h-fit rounded-md border p-2 text-left transition-all",
                             product.isAdded
-                              ? "bg-muted/60 border-muted-foreground/30 opacity-60 cursor-not-allowed"
-                              : "hover:border-yellow-600/50 active:scale-[0.98] hover:shadow-sm",
+                              ? "cursor-not-allowed border-muted-foreground/30 bg-muted/60 opacity-60"
+                              : "hover:border-yellow-600/50 hover:shadow-sm active:scale-[0.98]",
                             product.availableQuantity < 1 &&
-                              "opacity-50 cursor-not-allowed",
+                              "cursor-not-allowed opacity-50"
                           )}
                         >
-                          <div className="font-medium line-clamp-2">
+                          <div className="line-clamp-2 font-medium">
                             {product.productName}
                           </div>
-                          <div className="mt-2 flex items-baseline gap-1.5 justify-between">
+                          <div className="mt-2 flex items-baseline justify-between gap-1.5">
                             <span className="text-lg font-bold">
                               {product.sellingPrice.toLocaleString()} TZS
                             </span>
                           </div>
-                          <div className="mt-1 flex items-baseline gap-1.5 justify-between">
+                          <div className="mt-1 flex items-baseline justify-between gap-1.5">
                             <span className="text-xs text-muted-foreground">
                               Stock: {product.availableQuantity}{" "}
                               {product.measurementUnit}
@@ -472,7 +473,7 @@ export default function PointOfSale() {
                             {product.isAdded && (
                               <Badge
                                 variant="secondary"
-                                className="text-xs border-muted-foreground/30 rounded-md"
+                                className="rounded-md border-muted-foreground/30 text-xs"
                               >
                                 Added
                               </Badge>
@@ -486,27 +487,30 @@ export default function PointOfSale() {
               </Sheet>
             </div>
             {/* Customer Selector */}
-            <div className="w-full md:pl-2 flex justify-between items-center h-12 border-b">
+            <div className="flex h-12 w-full items-center justify-between border-b md:pl-2">
               <Popover open={customerOpen} onOpenChange={setCustomerOpen}>
-                <PopoverTrigger asChild className="w-full flex-1">
+                <PopoverTrigger className="w-full flex-1">
                   <Button
                     variant="outline"
                     role="combobox"
                     aria-expanded={customerOpen}
-                    className="w-full justify-between shadow-none flex-1 rounded-md -mt-0.5 cursor-pointer hover:bg-background"
+                    className="-mt-0.5 w-full flex-1 cursor-pointer justify-between rounded-md shadow-none hover:bg-background"
                   >
                     {selectedCustomer ? (
                       `${selectedCustomer.customerName} (${selectedCustomer.phoneNumber})`
                     ) : (
                       <div className="flex items-center justify-center">
-                        <UserRoundSearchIcon className="h-4 w-4 mr-2" />
+                        <HugeiconsIcon
+                          icon={UserSearch01Icon}
+                          className="mr-2 h-4 w-4"
+                        />
                         Walk in Customer
                       </div>
                     )}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="p-0 w-(--radix-popover-trigger-width)"
+                  className="w-(--radix-popover-trigger-width) p-0"
                   align="start"
                 >
                   <Command>
@@ -517,8 +521,8 @@ export default function PointOfSale() {
                         <CommandItem
                           value="walk-in-customer"
                           onSelect={() => {
-                            setSelectedCustomerId(null);
-                            setCustomerOpen(false);
+                            setSelectedCustomerId(null)
+                            setCustomerOpen(false)
                           }}
                         >
                           <span className="font-medium">Walk in Customer</span>
@@ -530,24 +534,25 @@ export default function PointOfSale() {
                               customer.customerName + " " + customer.phoneNumber
                             }
                             onSelect={() => {
-                              setSelectedCustomerId(customer._id);
-                              setCustomerOpen(false);
+                              setSelectedCustomerId(customer._id)
+                              setCustomerOpen(false)
                             }}
                           >
                             <span>
-                              <Check
+                              <HugeiconsIcon
+                                icon={Check}
                                 className={cn(
                                   "mr-2 h-4 w-4",
                                   customer._id === selectedCustomerId
                                     ? ""
-                                    : "hidden",
+                                    : "hidden"
                                 )}
                               />
                             </span>
                             <span className="font-medium">
                               {customer.customerName}
                             </span>
-                            <span className="ml-2 text-muted-foreground text-sm">
+                            <span className="ml-2 text-sm text-muted-foreground">
                               {customer.phoneNumber}
                             </span>
                           </CommandItem>
@@ -563,9 +568,12 @@ export default function PointOfSale() {
                   trigger={
                     <div className="">
                       <Tooltip>
-                        <TooltipTrigger asChild>
+                        <TooltipTrigger>
                           <Button variant={"ghost"} className="h-fit w-fit">
-                            <UserPlus2Icon className="h-4 w-4" />
+                            <HugeiconsIcon
+                              icon={UserAdd01Icon}
+                              className="h-4 w-4"
+                            />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -579,19 +587,22 @@ export default function PointOfSale() {
                 <div
                   onClick={() => {
                     if (cart.length === 0) {
-                      return;
+                      return
                     }
-                    setShowResetConfirm(true);
+                    setShowResetConfirm(true)
                   }}
                 >
                   <Tooltip>
-                    <TooltipTrigger asChild>
+                    <TooltipTrigger>
                       <Button
                         disabled={cart.length === 0}
                         variant={"ghost"}
                         className="h-fit w-fit"
                       >
-                        <ListRestart className="h-4 w-4" />
+                        <HugeiconsIcon
+                          icon={ListRestartIcon}
+                          className="h-4 w-4"
+                        />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -603,34 +614,40 @@ export default function PointOfSale() {
             </div>
 
             {/* Cart Items */}
-            <div className="flex-1 h-full overflow-y-auto shadow-inner">
-              <div className="md:p-2 space-y-2 pt-2 h-full">
+            <div className="h-full flex-1 overflow-y-auto shadow-inner">
+              <div className="h-full space-y-2 pt-2 md:p-2">
                 {cart.length === 0 ? (
-                  <div className="text-muted-foreground h-full flex flex-col gap-2 items-center justify-center">
-                    <ScrollText size={60} />
+                  <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
+                    <HugeiconsIcon
+                      icon={ShoppingCart01Icon}
+                      className="h-12 w-12"
+                    />
                     <p>Cart is empty</p>
                   </div>
                 ) : (
                   cart.map((item) => (
                     <div
                       key={item.productId}
-                      className="rounded-md p-3 border bg-background relative overflow-hidden"
+                      className="relative overflow-hidden rounded-md border bg-background p-3"
                     >
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-destructive hover:text-destructive h-8 w-8 absolute top-0 right-0 bg-red-600/10 hover:bg-red-600/20 transition-all border rounded-none rounded-bl-md rounded-tr-md"
+                        className="absolute top-0 right-0 h-8 w-8 rounded-none rounded-tr-md rounded-bl-md border bg-red-600/10 text-destructive transition-all hover:bg-red-600/20 hover:text-destructive"
                         onClick={() => removeFromCart(item.productId)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <HugeiconsIcon
+                          icon={Delete02Icon}
+                          className="h-4 w-4"
+                        />
                       </Button>
                       <div className="font-medium">{item.name}</div>
-                      <div className="text-sm text-muted-foreground mt-1">
+                      <div className="mt-1 text-sm text-muted-foreground">
                         {item.quantity} <span className="font-semibold">x</span>{" "}
                         {item.finalPrice.toLocaleString()} TZS
                       </div>
 
-                      <div className="mt-3 flex flex-wrap gap-2 items-center">
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
                         <div className="flex items-center gap-1">
                           <Button
                             variant="outline"
@@ -639,11 +656,14 @@ export default function PointOfSale() {
                             onClick={() =>
                               updateCartItemQuantity(
                                 item.productId,
-                                item.quantity - 1,
+                                item.quantity - 1
                               )
                             }
                           >
-                            <Minus className="h-4 w-4" />
+                            <HugeiconsIcon
+                              icon={MinusSignIcon}
+                              className="h-4 w-4"
+                            />
                           </Button>
                           <Input
                             type="number"
@@ -652,7 +672,7 @@ export default function PointOfSale() {
                             onChange={(e) =>
                               updateCartItemQuantity(
                                 item.productId,
-                                Number(e.target.value),
+                                Number(e.target.value)
                               )
                             }
                             className="h-8 w-28 text-center"
@@ -664,11 +684,14 @@ export default function PointOfSale() {
                             onClick={() =>
                               updateCartItemQuantity(
                                 item.productId,
-                                item.quantity + 1,
+                                item.quantity + 1
                               )
                             }
                           >
-                            <Plus className="h-4 w-4" />
+                            <HugeiconsIcon
+                              icon={PlusSignIcon}
+                              className="h-4 w-4"
+                            />
                           </Button>
                         </div>
 
@@ -679,7 +702,7 @@ export default function PointOfSale() {
                           onChange={(e) =>
                             updateCartItemPrice(
                               item.productId,
-                              Number(e.target.value),
+                              Number(e.target.value)
                             )
                           }
                           className="h-8 w-28"
@@ -692,25 +715,28 @@ export default function PointOfSale() {
             </div>
 
             {/* Summary & Payment */}
-            <div className="md:p-2 py-2 border-t bg-background">
+            <div className="border-t bg-background py-2 md:p-2">
               <div className="space-y-2">
                 {returnedReturnables.length > 0 && (
                   <>
                     <div>
-                      <Label className="text-sm font-medium flex items-center gap-1.5 mb-2 whitespace-nowrap">
-                        <RotateCcw size={16} />
+                      <Label className="mb-2 flex items-center gap-1.5 text-sm font-medium whitespace-nowrap">
+                        <HugeiconsIcon
+                          icon={Rotate01Icon}
+                          className="h-4 w-4"
+                        />
                         Returned Empties:-
                         <span className="ml-1">Containers / Crates</span>
                       </Label>
 
                       <div className="overflow-x-auto">
-                        <div className="flex gap-2 min-w-max">
+                        <div className="flex min-w-max gap-2">
                           {returnedReturnables.map((ret) => (
                             <div
                               key={ret.groupId}
-                              className="border rounded-lg p-2 bg-muted/20 min-w-[140px]"
+                              className="min-w-35 rounded-lg border bg-muted/20 p-2"
                             >
-                              <div className="text-xs text-muted-foreground mb-1 truncate max-w-[120px]">
+                              <div className="mb-1 max-w-30 truncate text-xs text-muted-foreground">
                                 {ret.name}
                               </div>
                               <div className="flex items-center gap-1.5">
@@ -721,11 +747,14 @@ export default function PointOfSale() {
                                   onClick={() =>
                                     updateReturnedQuantity(
                                       ret.groupId,
-                                      ret.returnedQuantity - 1,
+                                      ret.returnedQuantity - 1
                                     )
                                   }
                                 >
-                                  <Minus size={14} />
+                                  <HugeiconsIcon
+                                    icon={MinusSignIcon}
+                                    className="h-4 w-4"
+                                  />
                                 </Button>
                                 <Input
                                   type="number"
@@ -733,7 +762,7 @@ export default function PointOfSale() {
                                   onChange={(e) =>
                                     updateReturnedQuantity(
                                       ret.groupId,
-                                      Number(e.target.value),
+                                      Number(e.target.value)
                                     )
                                   }
                                   className="h-8 w-16 text-center"
@@ -745,14 +774,17 @@ export default function PointOfSale() {
                                   onClick={() =>
                                     updateReturnedQuantity(
                                       ret.groupId,
-                                      ret.returnedQuantity + 1,
+                                      ret.returnedQuantity + 1
                                     )
                                   }
                                 >
-                                  <Plus size={14} />
+                                  <HugeiconsIcon
+                                    icon={PlusSignIcon}
+                                    className="h-4 w-4"
+                                  />
                                 </Button>
                               </div>
-                              <div className="text-xs text-muted-foreground mt-1">
+                              <div className="mt-1 text-xs text-muted-foreground">
                                 max: {ret.maxPossible}
                               </div>
                             </div>
@@ -765,7 +797,7 @@ export default function PointOfSale() {
                 )}
                 <div className="flex items-center gap-2">
                   <Label className="min-w-20">Payment:</Label>
-                  <div className="flex gap-2 flex-1">
+                  <div className="flex flex-1 gap-2">
                     <Button
                       disabled={cart.length === 0 || initialPaymentAmount === 0}
                       variant={
@@ -774,12 +806,16 @@ export default function PointOfSale() {
                       size="sm"
                       className={`flex-1 ${
                         selectedPaymentMethod === "Cash"
-                          ? "bg-yellow-600 text-white hover:text-white hover:bg-yellow-600/90 dark:bg-yellow-600 dark:hover:bg-yellow-600/90 dark:text-white"
+                          ? "bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90"
                           : ""
                       }`}
                       onClick={() => setSelectedPaymentMethod("Cash")}
                     >
-                      <Banknote className="h-4 w-4 mr-1" /> Cash
+                      <HugeiconsIcon
+                        icon={Money04Icon}
+                        className="mr-1 h-4 w-4"
+                      />
+                      Cash
                     </Button>
                     <Button
                       disabled={cart.length === 0 || initialPaymentAmount === 0}
@@ -789,12 +825,16 @@ export default function PointOfSale() {
                       size="sm"
                       className={`flex-1 ${
                         selectedPaymentMethod === "Bank"
-                          ? "bg-yellow-600 text-white hover:text-white hover:bg-yellow-600/90 dark:bg-yellow-600 dark:hover:bg-yellow-600/90 dark:text-white"
+                          ? "bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90"
                           : ""
                       }`}
                       onClick={() => setSelectedPaymentMethod("Bank")}
                     >
-                      <CreditCard className="h-4 w-4 mr-1" /> Bank
+                      <HugeiconsIcon
+                        icon={CreditCardIcon}
+                        className="mr-1 h-4 w-4"
+                      />
+                      Bank
                     </Button>
                     <Button
                       disabled={cart.length === 0 || initialPaymentAmount === 0}
@@ -806,17 +846,21 @@ export default function PointOfSale() {
                       size="sm"
                       className={`flex-1 ${
                         selectedPaymentMethod === "Mobile"
-                          ? "bg-yellow-600 text-white hover:text-white hover:bg-yellow-600/90 dark:bg-yellow-600 dark:hover:bg-yellow-600/90 dark:text-white"
+                          ? "bg-yellow-600 text-white hover:bg-yellow-600/90 hover:text-white dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90"
                           : ""
                       }`}
                       onClick={() => setSelectedPaymentMethod("Mobile")}
                     >
-                      <Smartphone className="h-4 w-4 mr-1" /> Mobile
+                      <HugeiconsIcon
+                        icon={SmartPhone02Icon}
+                        className="mr-1 h-4 w-4"
+                      />
+                      Mobile
                     </Button>
                   </div>
                 </div>
                 <Separator className="my-2" />
-                <div className="flex items-center gap-2 justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <div className="flex gap-2">
                     <Label className="">Paid:</Label>
                     <Input
@@ -825,18 +869,18 @@ export default function PointOfSale() {
                         initialPaymentEdited ? initialPaymentAmount : subtotal
                       }
                       onChange={(e) => {
-                        setInitialPaymentEdited(true);
+                        setInitialPaymentEdited(true)
                         setInitialPaymentAmount(
-                          e.target.value === "" ? "" : Number(e.target.value),
-                        );
+                          e.target.value === "" ? "" : Number(e.target.value)
+                        )
                       }}
                       placeholder="0"
-                      className="flex-1 w-32"
+                      className="w-32 flex-1"
                     />
                   </div>
                   <div className="flex gap-2">
                     <Label className="">Balance:</Label>
-                    <div className="flex-1 text-left px-3 py-2 border text-muted-foreground rounded-md whitespace-nowrap w-32 text-sm">
+                    <div className="w-32 flex-1 rounded-md border px-3 py-2 text-left text-sm whitespace-nowrap text-muted-foreground">
                       {balanceDue.toLocaleString()} TZS
                     </div>
                   </div>
@@ -845,13 +889,13 @@ export default function PointOfSale() {
 
               <Separator className="my-2" />
 
-              <div className="flex justify-between text-lg font-bold mb-3">
+              <div className="mb-3 flex justify-between text-lg font-bold">
                 <span>Total:</span>
                 <span className={""}>{subtotal.toLocaleString()} TZS</span>
               </div>
 
               <Button
-                className="w-full h-fit bg-yellow-600 hover:bg-yellow-600/90 dark:bg-yellow-600 py-3 dark:text-white dark:hover:bg-yellow-600/90"
+                className="h-fit w-full bg-yellow-600 py-3 hover:bg-yellow-600/90 dark:bg-yellow-600 dark:text-white dark:hover:bg-yellow-600/90"
                 size="lg"
                 onClick={handleCompleteSale}
                 disabled={createSaleMutation.isPending || cart.length === 0}
@@ -867,20 +911,20 @@ export default function PointOfSale() {
 
       {/* Reset Confirmation Dialog */}
       <Dialog open={showResetConfirm} onOpenChange={setShowResetConfirm}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-106.25">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="h-5 w-5" />
+              <HugeiconsIcon icon={Alert02Icon} className="h-5 w-5" />
               Clear Current Cart?
             </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1.5">
+            <p className="mt-1.5 text-sm text-muted-foreground">
               This will remove all {cart.length} item
               {cart.length !== 1 ? "s" : ""} from the cart. This action cannot
               be undone.
             </p>
           </DialogHeader>
 
-          <DialogFooter className="gap-2 flex">
+          <DialogFooter className="flex gap-2">
             <Button
               variant="outline"
               onClick={() => setShowResetConfirm(false)}
@@ -890,11 +934,11 @@ export default function PointOfSale() {
             <Button
               variant="destructive"
               onClick={() => {
-                setCart([]);
-                setInitialPaymentEdited(false);
-                setInitialPaymentAmount("");
-                setShowResetConfirm(false);
-                toast.info("Cart has been cleared");
+                setCart([])
+                setInitialPaymentEdited(false)
+                setInitialPaymentAmount("")
+                setShowResetConfirm(false)
+                toast.info("Cart has been cleared")
               }}
             >
               Yes, Clear Cart
@@ -909,7 +953,7 @@ export default function PointOfSale() {
         onOpenChange={(open) => !open && setSelectedProduct(null)}
       >
         {selectedProduct && (
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-106.25">
             <DialogHeader>
               <DialogTitle>{selectedProduct.productName}</DialogTitle>
             </DialogHeader>
@@ -924,7 +968,7 @@ export default function PointOfSale() {
                     size="icon"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   >
-                    <Minus className="h-4 w-4" />
+                    <HugeiconsIcon icon={MinusSignIcon} className="h-4 w-4" />
                   </Button>
                   <Input
                     type="number"
@@ -940,7 +984,7 @@ export default function PointOfSale() {
                     size="icon"
                     onClick={() => setQuantity((q) => q + 1)}
                   >
-                    <Plus className="h-4 w-4" />
+                    <HugeiconsIcon icon={PlusSignIcon} className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -952,15 +996,15 @@ export default function PointOfSale() {
                   value={customPrice}
                   onChange={(e) =>
                     setCustomPrice(
-                      e.target.value === "" ? "" : Number(e.target.value),
+                      e.target.value === "" ? "" : Number(e.target.value)
                     )
                   }
                   placeholder={selectedProduct.sellingPrice.toString()}
                 />
                 {Number(customPrice) > 0 &&
                   Number(customPrice) < selectedProduct.buyingPrice && (
-                    <p className="text-sm text-destructive flex items-center gap-1.5 mt-1">
-                      <AlertTriangle className="h-4 w-4" />
+                    <p className="mt-1 flex items-center gap-1.5 text-sm text-destructive">
+                      <HugeiconsIcon icon={Alert02Icon} className="h-4 w-4" />
                       Selling below cost price
                     </p>
                   )}
@@ -990,5 +1034,5 @@ export default function PointOfSale() {
         )}
       </Dialog>
     </div>
-  );
+  )
 }

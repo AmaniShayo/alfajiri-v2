@@ -39,7 +39,7 @@ export default function RootLayout({
         <ClientProviders>
           <AuthProvider>
             <Toaster richColors={true} />
-            <div className="grid min-h-screen w-full grid-cols-12 bg-linear-to-bl from-[#a9d7fc] via-[#fff0f5] to-[#feeecd]">
+            <div className="grid min-h-screen w-full grid-cols-12 bg-linear-to-bl from-[#a9d7fc] via-[#fff0f5] to-[#feeecd] text-black">
               <div className="col-span-4 max-md:col-span-12">
                 <div className="flex h-full w-full flex-col p-4">
                   <div className="mb-4">

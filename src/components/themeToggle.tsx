@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Sun02Icon,
