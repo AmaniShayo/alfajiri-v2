@@ -478,14 +478,14 @@ export default function PointOfSale() {
               </Sheet>
             </div>
 
-            <div className="flex h-11 w-full items-center justify-between">
+            <div className="flex h-10 w-full items-center justify-between">
               <Popover open={customerOpen} onOpenChange={setCustomerOpen}>
-                <PopoverTrigger className="w-full flex-1">
+                <PopoverTrigger className="h-full w-full flex-1">
                   <Button
                     variant="outline"
                     role="combobox"
                     aria-expanded={customerOpen}
-                    className="w-full flex-1 cursor-pointer justify-between rounded-4xl shadow-none hover:bg-background"
+                    className="h-full w-full flex-1 cursor-pointer justify-between rounded-4xl shadow-none hover:bg-background"
                   >
                     {selectedCustomer ? (
                       `${selectedCustomer.customerName} (${selectedCustomer.phoneNumber})`
@@ -526,6 +526,12 @@ export default function PointOfSale() {
                               setCustomerOpen(false)
                             }}
                           >
+                            <span className="font-medium">
+                              {customer.customerName}
+                            </span>
+                            <span className="ml-2 text-sm text-muted-foreground">
+                              {customer.phoneNumber}
+                            </span>
                             <span>
                               <HugeiconsIcon
                                 icon={Check}
@@ -537,12 +543,6 @@ export default function PointOfSale() {
                                 )}
                               />
                             </span>
-                            <span className="font-medium">
-                              {customer.customerName}
-                            </span>
-                            <span className="ml-2 text-sm text-muted-foreground">
-                              {customer.phoneNumber}
-                            </span>
                           </CommandItem>
                         ))}
                       </CommandGroup>
@@ -550,12 +550,12 @@ export default function PointOfSale() {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <div className="flex gap-2">
+              <div className="flex h-full items-center justify-center gap-2">
                 <CustomerDialog
                   trigger={
                     <Tooltip>
                       <TooltipTrigger>
-                        <Button variant="ghost" className="h-fit w-fit">
+                        <Button variant="ghost" className="w-fit">
                           <HugeiconsIcon
                             icon={UserAdd01Icon}
                             className="h-4 w-4"
@@ -574,7 +574,7 @@ export default function PointOfSale() {
                     <Button
                       disabled={cart.length === 0}
                       variant="ghost"
-                      className="h-fit w-fit"
+                      className="w-fit"
                       onClick={() => setShowResetConfirm(true)}
                     >
                       <HugeiconsIcon
@@ -590,7 +590,7 @@ export default function PointOfSale() {
               </div>
             </div>
 
-            <div className="h-full flex-1 overflow-y-auto">
+            <div className="my-1 h-full flex-1 overflow-y-auto rounded-4xl">
               <div className="h-full space-y-2">
                 {cart.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">

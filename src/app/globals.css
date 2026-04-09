@@ -126,6 +126,41 @@
   html {
     @apply font-sans;
     }
+
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color:transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background-color: var(--accent);
+  }
+
+  /* Dark mode */
+  .dark ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background-color: var(--color-neutral-500);
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color:
+      var(--color-gray-300) transparent;
+  }
+
+  .dark * {
+    scrollbar-color:
+      var(--color-neutral-500) transparent;
+  }
 }
 
 .spinner_ {

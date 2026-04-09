@@ -51,7 +51,11 @@ export function NavUser() {
         <DropdownMenu>
           <DropdownMenuTrigger
             render={(triggerProps) => (
-              <SidebarMenuButton {...triggerProps} size="lg" className="">
+              <SidebarMenuButton
+                {...triggerProps}
+                size="lg"
+                className="rounded-4xl"
+              >
                 <Avatar className="h-8 w-8 rounded-full">
                   <AvatarFallback className="rounded-full font-medium">
                     {initials}
@@ -115,6 +119,8 @@ export function NavUser() {
               <HugeiconsIcon icon={BadgeCheck} className="h-4 w-4" />
               Account
             </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
 
             <DropdownMenuItem
               onClick={() => logout()}
