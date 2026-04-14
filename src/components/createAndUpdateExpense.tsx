@@ -190,7 +190,7 @@ export function ExpenseDialog({
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Amount */}
-          <div className="space-y-2">
+          <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium">Amount *</label>
             <Input
               type="number"
@@ -208,7 +208,7 @@ export function ExpenseDialog({
           </div>
 
           {/* Category */}
-          <div className="space-y-2">
+          <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium">Category *</label>
             <Select
               onValueChange={(value) => form.setValue("category", value as any)}
@@ -250,7 +250,7 @@ export function ExpenseDialog({
           </div>
 
           {/* Description */}
-          <div className="space-y-2">
+          <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium">
               Description (Optional)
             </label>
@@ -266,7 +266,7 @@ export function ExpenseDialog({
           </div>
 
           {/* Remarks */}
-          <div className="space-y-2">
+          <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium">Remarks (Optional)</label>
             <Textarea
               placeholder="Additional notes or remarks"

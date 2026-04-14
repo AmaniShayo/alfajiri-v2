@@ -1,5 +1,5 @@
-import { Schema, model } from "mongoose";
-import { IProduct } from "../model";
+import { Schema, model } from "mongoose"
+import { IProduct } from "../model"
 
 const productSchema = new Schema<IProduct>(
   {
@@ -21,8 +21,10 @@ const productSchema = new Schema<IProduct>(
     },
     isLowInStock: { type: Boolean, required: true, default: false },
     returnableGroup: { type: Schema.Types.ObjectId, ref: "Returnable" },
+    barcode: { type: String },
+    images: [{ type: String }],
   },
   { timestamps: true }
-);
+)
 
-export const Product = model<IProduct>("Product", productSchema);
+export const Product = model<IProduct>("Product", productSchema)

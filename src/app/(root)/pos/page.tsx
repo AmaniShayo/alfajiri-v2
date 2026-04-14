@@ -65,6 +65,7 @@ import { useCustomers } from "@/context/customerProvider"
 import { trpc } from "@/lib/trpc"
 import { toast } from "sonner"
 import { CustomerDialog } from "@/components/createAndUpdateCustomer"
+import { Spinner } from "@/components/ui/spinner"
 
 type CartItem = {
   productId: string
@@ -609,7 +610,7 @@ export default function PointOfSale() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="absolute top-0 right-0 h-8 w-8 rounded-none rounded-tr-4xl rounded-bl-md border bg-red-600/10 text-destructive transition-all hover:bg-red-600/20 hover:text-destructive"
+                        className="absolute top-0 right-0 h-8 w-8 rounded-none rounded-tr-4xl rounded-bl-3xl border bg-red-600/10 text-destructive transition-all hover:bg-red-600/20 hover:text-destructive"
                         onClick={() => removeFromCart(item.productId)}
                       >
                         <HugeiconsIcon
@@ -838,13 +839,21 @@ export default function PointOfSale() {
 
                 <Separator className="my-2" />
 
-                <div className="flex items-center justify-between gap-2">
+                <div className="mb-3 flex justify-between text-lg font-bold">
+                  <span>Total:</span>
+                  <span>{subtotal.toLocaleString()} TZS</span>
+                </div>
+
+                <div className="mb-2 flex items-center justify-between gap-2">
                   <div className="flex gap-2">
                     <Label>Paid:</Label>
                     <Input
                       type="number"
                       value={
                         initialPaymentEdited ? initialPaymentAmount : subtotal
+                      }
+                      disabled={
+                        createSaleMutation.isPending || cart.length === 0
                       }
                       onChange={(e) => {
                         setInitialPaymentEdited(true)
@@ -865,12 +874,7 @@ export default function PointOfSale() {
                 </div>
               </div>
 
-              <Separator className="my-2" />
-
-              <div className="mb-3 flex justify-between text-lg font-bold">
-                <span>Total:</span>
-                <span>{subtotal.toLocaleString()} TZS</span>
-              </div>
+              {/* <Separator className="my-2" /> */}
 
               <Button
                 className="w-full"
@@ -878,9 +882,7 @@ export default function PointOfSale() {
                 onClick={handleCompleteSale}
                 disabled={createSaleMutation.isPending || cart.length === 0}
               >
-                {createSaleMutation.isPending
-                  ? "Processing..."
-                  : "Complete Sale"}
+                {createSaleMutation.isPending ? <Spinner /> : "Complete Sale"}
               </Button>
             </div>
           </div>

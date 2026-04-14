@@ -157,7 +157,7 @@ export function CustomerDialog({
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Customer Name */}
-          <div className="space-y-2">
+          <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium">Customer Name *</label>
             <Input
               placeholder="e.g. John Temba"
@@ -171,7 +171,7 @@ export function CustomerDialog({
           </div>
 
           {/* Phone Number */}
-          <div className="space-y-2">
+          <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium">Phone Number *</label>
             <Input
               placeholder="+255 712 345 678"
@@ -185,7 +185,7 @@ export function CustomerDialog({
           </div>
 
           {/* Address */}
-          <div className="space-y-2">
+          <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium">Address *</label>
             <Input
               placeholder="e.g. Plot 45, Samora Avenue, Dar es Salaam"
@@ -199,7 +199,7 @@ export function CustomerDialog({
           </div>
 
           {/* Email Address */}
-          <div className="space-y-2">
+          <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium">Email (Optional)</label>
             <Input
               type="email"
