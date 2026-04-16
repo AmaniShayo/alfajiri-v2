@@ -147,7 +147,13 @@ export function CustomerDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>{trigger}</DialogTrigger>
+      <DialogTrigger
+        render={(props) => (
+          <Button {...props} variant="ghost" className="w-fit">
+            {trigger}
+          </Button>
+        )}
+      ></DialogTrigger>
 
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-125">
         <DialogHeader>

@@ -386,15 +386,20 @@ export default function PointOfSale() {
           <div className="flex h-full flex-col justify-between p-2">
             <div className="flex w-full justify-end py-2 md:hidden">
               <Sheet>
-                <SheetTrigger>
-                  <Button className="w-fit justify-center rounded-md bg-primary text-white hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/90">
-                    <HugeiconsIcon
-                      icon={PlusSignIcon}
-                      className="mr-2 h-4 w-4"
-                    />
-                    <span className="text-lg">Add Items</span>
-                  </Button>
-                </SheetTrigger>
+                <SheetTrigger
+                  render={(props) => (
+                    <Button
+                      {...props}
+                      className="w-fit justify-center rounded-md bg-primary text-white hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/90"
+                    >
+                      <HugeiconsIcon
+                        icon={PlusSignIcon}
+                        className="mr-2 h-4 w-4"
+                      />
+                      <span className="text-lg">Add Items</span>
+                    </Button>
+                  )}
+                ></SheetTrigger>
                 <SheetContent className="w-full! p-2 sm:max-w-md">
                   <SheetHeader>
                     <SheetTitle>Add Items</SheetTitle>
@@ -481,26 +486,30 @@ export default function PointOfSale() {
 
             <div className="flex h-10 w-full items-center justify-between">
               <Popover open={customerOpen} onOpenChange={setCustomerOpen}>
-                <PopoverTrigger className="h-full w-full flex-1">
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={customerOpen}
-                    className="h-full w-full flex-1 cursor-pointer justify-between rounded-4xl shadow-none hover:bg-background"
-                  >
-                    {selectedCustomer ? (
-                      `${selectedCustomer.customerName} (${selectedCustomer.phoneNumber})`
-                    ) : (
-                      <div className="flex items-center justify-center">
-                        <HugeiconsIcon
-                          icon={UserSearch01Icon}
-                          className="mr-2 h-4 w-4"
-                        />
-                        Walk in Customer
-                      </div>
-                    )}
-                  </Button>
-                </PopoverTrigger>
+                <PopoverTrigger
+                  className="h-full w-full flex-1"
+                  render={(props) => (
+                    <Button
+                      {...props}
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={customerOpen}
+                      className="h-full w-full flex-1 cursor-pointer justify-between rounded-4xl shadow-none hover:bg-background"
+                    >
+                      {selectedCustomer ? (
+                        `${selectedCustomer.customerName} (${selectedCustomer.phoneNumber})`
+                      ) : (
+                        <div className="flex items-center justify-center">
+                          <HugeiconsIcon
+                            icon={UserSearch01Icon}
+                            className="mr-2 h-4 w-4"
+                          />
+                          Walk in Customer
+                        </div>
+                      )}
+                    </Button>
+                  )}
+                ></PopoverTrigger>
                 <PopoverContent className="w-full! p-0" align="start">
                   <Command>
                     <CommandInput placeholder="Search customer..." />
@@ -555,14 +564,16 @@ export default function PointOfSale() {
                 <CustomerDialog
                   trigger={
                     <Tooltip>
-                      <TooltipTrigger>
-                        <Button variant="ghost" className="w-fit">
-                          <HugeiconsIcon
-                            icon={UserAdd01Icon}
-                            className="h-4 w-4"
-                          />
-                        </Button>
-                      </TooltipTrigger>
+                      <TooltipTrigger
+                        render={(props) => (
+                          <Button {...props} variant="ghost" className="w-fit">
+                            <HugeiconsIcon
+                              icon={UserAdd01Icon}
+                              className="h-4 w-4"
+                            />
+                          </Button>
+                        )}
+                      ></TooltipTrigger>
                       <TooltipContent>
                         <p>Add new customer</p>
                       </TooltipContent>
@@ -571,19 +582,22 @@ export default function PointOfSale() {
                   onSuccess={() => customersRefetch()}
                 />
                 <Tooltip>
-                  <TooltipTrigger>
-                    <Button
-                      disabled={cart.length === 0}
-                      variant="ghost"
-                      className="w-fit"
-                      onClick={() => setShowResetConfirm(true)}
-                    >
-                      <HugeiconsIcon
-                        icon={ListRestartIcon}
-                        className="h-4 w-4"
-                      />
-                    </Button>
-                  </TooltipTrigger>
+                  <TooltipTrigger
+                    render={(props) => (
+                      <Button
+                        {...props}
+                        disabled={cart.length === 0}
+                        variant="ghost"
+                        className="w-fit"
+                        onClick={() => setShowResetConfirm(true)}
+                      >
+                        <HugeiconsIcon
+                          icon={ListRestartIcon}
+                          className="h-4 w-4"
+                        />
+                      </Button>
+                    )}
+                  ></TooltipTrigger>
                   <TooltipContent>
                     <p>Reset Cart</p>
                   </TooltipContent>
