@@ -612,7 +612,7 @@ export default function PointOfSale() {
             <div className="my-1 h-full flex-1 overflow-y-auto rounded-4xl">
               <div className="h-full space-y-2">
                 {cart.length === 0 ? (
-                  <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
+                  <div className="flex h-full flex-col items-center justify-center gap-2 rounded-4xl border text-muted-foreground">
                     <HugeiconsIcon
                       icon={ShoppingCart01Icon}
                       className="h-12 w-12"
