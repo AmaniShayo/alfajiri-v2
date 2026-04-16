@@ -561,26 +561,30 @@ export default function PointOfSale() {
                 </PopoverContent>
               </Popover>
               <div className="flex h-full items-center justify-center gap-2">
-                <CustomerDialog
-                  trigger={
-                    <Tooltip>
-                      <TooltipTrigger
-                        render={(props) => (
-                          <Button {...props} variant="ghost" className="w-fit">
+                {/* Add New Customer Button - Fixed for Base UI */}
+                <Tooltip>
+                  <TooltipTrigger
+                    render={(props) => (
+                      <CustomerDialog
+                        trigger={
+                          <div
+                            {...props}
+                            className="flex h-10 w-fit items-center justify-between"
+                          >
                             <HugeiconsIcon
                               icon={UserAdd01Icon}
                               className="h-4 w-4"
                             />
-                          </Button>
-                        )}
-                      ></TooltipTrigger>
-                      <TooltipContent>
-                        <p>Add new customer</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  }
-                  onSuccess={() => customersRefetch()}
-                />
+                          </div>
+                        }
+                        onSuccess={() => customersRefetch()}
+                      />
+                    )}
+                  />
+                  <TooltipContent>
+                    <p>Add new customer</p>
+                  </TooltipContent>
+                </Tooltip>
                 <Tooltip>
                   <TooltipTrigger
                     render={(props) => (
